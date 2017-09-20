@@ -1,3 +1,4 @@
+.vscode/
 .bundle/
 .idea/
 log/*.log
