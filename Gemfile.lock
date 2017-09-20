@@ -1,0 +1,19 @@
+PATH
+  remote: .
+  specs:
+    ires (0.1.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ffi (1.9.18)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  ffi
+  ires!
+
+BUNDLED WITH
+   1.15.4

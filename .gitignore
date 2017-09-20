@@ -1,0 +1,7 @@
+.bundle/
+.idea/
+log/*.log
+pkg/
+test/
+vendor/bundle
+*.iml
