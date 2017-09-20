@@ -5,10 +5,10 @@
 
 ```erb
 <!-- Usually -->
-<%= ires_tag( path: path, width: 90, height: 120, mode: "resize" ) %>
+<%= ires_tag( path: "image_01.jpg", width: 90, height: 120, mode: "resize" ) %>
 
 <!-- Using image_tag options -->
-<%= ires_tag(path: path, width: 200, height: 200, mode: "crop", alt: "sample image") %>
+<%= ires_tag( path: "http://example.com/image_02.jpg", width: 200, height: 200, mode: "crop", alt: "example image" ) %>
 ```
 
 ### Select mode
