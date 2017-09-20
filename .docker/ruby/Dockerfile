@@ -11,3 +11,4 @@ COPY . /ires
 
 RUN bundle install
 
+EXPOSE 3000
