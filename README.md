@@ -66,6 +66,31 @@ Or install it yourself as:
 $ gem install ires
 ```
 
+## Development
+
+環境はDockerで準備しています
+
+```shell
+$ docker-compose up
+
+# コンテナに入る
+# go
+$ docker-compose exec so bash
+# ruby
+$ docker-compose exec gem bash
+```
+
+### Go（shared objectの作成）
+パッケージ管理は[dep](https://github.com/golang/dep)を使っています
+
+```shell
+# soコンテナ内で
+$ dep ensure
+
+# shared object として出力する
+$ go build -buildmode=c-shared -o shared/ires.so main.go 
+```
+
 
 ## License
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).

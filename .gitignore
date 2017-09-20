@@ -4,5 +4,14 @@
 log/*.log
 pkg/
 test/
-vendor/bundle
 *.iml
+vendor/
+*.so
+*.h
+
+# go resouce
+ext/*.h
+ext/*.so
+ext/vendor
+ext/shared/*
+!ext/shared/.keep
