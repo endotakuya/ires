@@ -18,5 +18,6 @@ Gem::Specification.new do |s|
 
   # テスト用
   s.add_dependency "rails", "~> 5.1.4"
+  s.add_development_dependency "sqlite3"
 
 end
