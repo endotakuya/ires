@@ -3,7 +3,7 @@ module Ires
 
     # Image resize
     # return [image_tag]
-    def ires_tag(path:, width:, height:, mode:, **option)
+    def ires_tag(path:, width:, height:, mode: "resize", **option)
       full_path = image_full_path(path.to_s)
 
       # Reszie image 
