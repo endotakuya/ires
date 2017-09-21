@@ -1,0 +1,27 @@
+version: "3"
+services:
+  gem:
+    build:
+      context: .
+      dockerfile: .docker/ruby/Dockerfile
+    volumes:
+      - .:/ires:cached
+      - bundle:/usr/local/bundle
+      - shared:/ires/lib/shared
+    ports:
+      - "3000:3000"
+    tty: true
+  so:
+    build:
+      context: .
+      dockerfile: .docker/go/Dockerfile
+    volumes:
+      - ./ext:/go/src/ires:cached
+      - go:/go
+      - shared:/go/src/ires/shared
+    tty: true
+
+volumes:
+  bundle:
+  go:
+  shared:

@@ -3,6 +3,19 @@
 .idea/
 log/*.log
 pkg/
-test/
-vendor/bundle
 *.iml
+vendor/
+*.so
+*.h
+lib/shared/*
+test/dummy/tmp/*
+!test/dummy/tmp/.keep
+test/dummy/log/*
+!test/dummy/log/.keep
+
+# go resouce
+ext/*.h
+ext/*.so
+ext/vendor
+ext/shared/*
+!ext/shared/.keep
