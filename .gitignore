@@ -8,7 +8,10 @@ vendor/
 *.so
 *.h
 lib/shared/*
-test/dummy/tmp
+test/dummy/tmp/*
+!test/dummy/tmp/.keep
+test/dummy/log/*
+!test/dummy/log/.keep
 
 # go resouce
 ext/*.h
