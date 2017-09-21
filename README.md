@@ -75,7 +75,7 @@ $ docker-compose up
 
 # コンテナに入る
 # go
-$ docker-compose exec so bash
+$ docker-compose exec ext bash
 # ruby
 $ docker-compose exec gem bash
 ```
@@ -87,7 +87,7 @@ $ docker-compose exec gem bash
 パッケージ管理は[dep](https://github.com/golang/dep)を使っています
 
 ```shell
-$ docker-compose exec so bash
+$ docker-compose exec ext bash
 $ dep ensure
 
 # shared object として出力する
