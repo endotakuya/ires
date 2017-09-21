@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     ires (0.1.0)
-      rails (~> 5.1.4)
+      rails (>= 5.0.0)
 
 GEM
   remote: https://rubygems.org/
