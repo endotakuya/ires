@@ -12,6 +12,8 @@ test/dummy/tmp/*
 !test/dummy/tmp/.keep
 test/dummy/log/*
 !test/dummy/log/.keep
+test/dummy/public/ires/*
+!test/dummy/public/ires/.keep
 
 # go resouce
 ext/*.h
