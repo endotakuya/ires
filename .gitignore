@@ -8,6 +8,7 @@ vendor/
 *.so
 *.h
 lib/shared/*
+test/dummy/tmp
 
 # go resouce
 ext/*.h
