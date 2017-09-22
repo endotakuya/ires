@@ -14,10 +14,15 @@ Gem::Specification.new do |s|
   s.description = "Ires is image resizer gem."
   s.license     = "MIT"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+  s.files = Dir["{lib,ext,shared}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
+  # 依存関係
+  s.add_dependency "ffi"
+  s.add_dependency "activesupport"
+  
   # テスト用
-  s.add_dependency "rails", ">= 5.0.0"
+  s.add_development_dependency "rails", ">= 5.0.0"
   s.add_development_dependency "sqlite3"
+  s.add_development_dependency "rake-compiler"
 
 end

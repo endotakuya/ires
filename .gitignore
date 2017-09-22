@@ -5,9 +5,6 @@ log/*.log
 pkg/
 *.iml
 vendor/
-*.so
-*.h
-lib/shared/*
 test/dummy/tmp/*
 !test/dummy/tmp/.keep
 test/dummy/log/*

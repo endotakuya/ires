@@ -71,23 +71,22 @@ $ gem install ires
 環境はDockerで準備しています
 
 ```shell
-$ docker-compose up
+$ docker build -t ires:v1 .
 
 # コンテナに入る
-# go
-$ docker-compose exec ext bash
-# ruby
-$ docker-compose exec gem bash
+$ docker run -it -v $(pwd):/go/src/ires -p 3000:3000 ires-go:v3 /bin/bash
 ```
 
 ## Gemテスト
+
+以下、コンテナ内の作業になります
 
 ### 1. Go（shared objectの作成）
 
 パッケージ管理は[dep](https://github.com/golang/dep)を使っています
 
 ```shell
-$ docker-compose exec ext bash
+# パッケージの依存関係を解決
 $ dep ensure
 
 # shared object として出力する
@@ -97,9 +96,7 @@ $ go build -buildmode=c-shared -o shared/ires.so main.go
 ### 2. Railsアプリの起動
 
 ```shell
-$ docker-compose exec gem bash
-$ cd test/dummy
-$ bin/rails s -b 0.0.0.0
+$ test/dummy/bin/rails s -b 0.0.0.0
 ```
 
 ## License
