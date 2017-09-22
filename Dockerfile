@@ -33,8 +33,8 @@ COPY go-wrapper /usr/local/bin
 RUN go get -u github.com/golang/dep/cmd/dep
 
 # App
-WORKDIR /go/src/ires
-COPY . /go/src/ires
+WORKDIR /go/src/github.com/endotakuya/ires
+COPY . /go/src/github.com/endotakuya/ires
 
 RUN gem install bundler rake-compiler \
     && bundle install

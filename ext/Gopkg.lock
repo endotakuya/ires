@@ -2,12 +2,6 @@
 
 
 [[projects]]
-  branch = "go"
-  name = "github.com/endotakuya/ires"
-  packages = ["ext/operate","ext/util/uri"]
-  revision = "4a36b897ecbc1175b9a84e56ecd6d74ce9f40687"
-
-[[projects]]
   branch = "master"
   name = "github.com/nfnt/resize"
   packages = ["."]
@@ -22,6 +16,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b602ec0b4f125e8d5750514267d970c12f616ca836aeeb5acb5d4ecb0c698a01"
+  inputs-digest = "555c9d2045607d7c797b9ed9663b0c2916aa91b14b6001e4119e9be49a742484"
   solver-name = "gps-cdcl"
   solver-version = 1
