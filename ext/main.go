@@ -24,11 +24,17 @@ func resizeImage(Uri *C.char, width, height int, Dir *C.char) *C.char {
 	dir := C.GoString(Dir)
 	uri := C.GoString(Uri)
 
+	size := []int{width, height}
+	path := util.NewImagePath(uri, dir, IMAGE_MODE_RESIZE, size...)
+
+	// When the image exists, return the image path
+	if !util.IsEmptyImage(path) {
+		return C.CString(strings.Replace(path, dir, "", -1))
+	}
+
 	inputImg, _ := operate.InputImage(uri, dir)
 	outputImg 	:= resize.Resize(uint(width), uint(height), inputImg, resize.Lanczos3)
 
-	size := []int{width, height}
-	path := util.NewImagePath(uri, dir, IMAGE_MODE_RESIZE, size...)
 	_, filePath := operate.CreateImage(outputImg, path)
 
 	fileName := strings.Replace(filePath, dir, "", -1)
@@ -40,6 +46,14 @@ func cropImage(Uri *C.char, width, height int, Dir *C.char) *C.char {
 	dir := C.GoString(Dir)
 	uri := C.GoString(Uri)
 
+	size := []int{width, height}
+	path := util.NewImagePath(uri, dir, IMAGE_MODE_CROP, size...)
+
+	// When the image exists, return the image path
+	if !util.IsEmptyImage(path) {
+		return C.CString(strings.Replace(path, dir, "", -1))
+	}
+
 	inputImg, _ := operate.InputImage(uri, dir)
 	outputImg, _ := cutter.Crop(inputImg, cutter.Config{
 		Width:  width,
@@ -48,8 +62,6 @@ func cropImage(Uri *C.char, width, height int, Dir *C.char) *C.char {
 		Options: cutter.Copy,
 	})
 
-	size := []int{width, height}
-	path := util.NewImagePath(uri, dir, IMAGE_MODE_CROP, size...)
 	_, filePath := operate.CreateImage(outputImg, path)
 
 	fileName := strings.Replace(filePath, dir, "", -1)
@@ -61,11 +73,16 @@ func resizeToCropImage(Uri *C.char, width, height int, Dir *C.char) *C.char {
 	dir := C.GoString(Dir)
 	uri := C.GoString(Uri)
 
-	inputImg, imgPath := operate.InputImage(uri, dir)
 	size := []int{width, height}
-	outputImg := operate.ResizeToCrop(imgPath, size, inputImg)
-
 	path := util.NewImagePath(uri, dir, IMAGE_MODE_RESIZE_TO_CROP, size...)
+
+	// When the image exists, return the image path
+	if !util.IsEmptyImage(path) {
+		return C.CString(strings.Replace(path, dir, "", -1))
+	}
+
+	inputImg, imgPath := operate.InputImage(uri, dir)
+	outputImg := operate.ResizeToCrop(imgPath, size, inputImg)
 	_, filePath := operate.CreateImage(outputImg, path)
 
 	fileName := strings.Replace(filePath, dir, "", -1)

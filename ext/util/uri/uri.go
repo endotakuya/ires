@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"io/ioutil"
 )
 
 // ローカルの画像かどうか
@@ -82,4 +83,14 @@ func FilePath(name string, d string, mode int, size ...int) string {
 func PrefixSize(size ...int) string {
 	prefix := strconv.Itoa(size[0]) + "x" + strconv.Itoa(size[1])
 	return prefix
+}
+
+// リサイズ済みのファイルがあれば、処理せず返す
+func IsEmptyImage(path string) bool {
+	_, err := ioutil.ReadFile(path)
+	if err != nil {
+		return true
+	} else {
+		return false
+	}
 }
