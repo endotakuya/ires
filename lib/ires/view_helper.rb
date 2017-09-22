@@ -23,9 +23,9 @@ module Ires
     end
 
     private
+    # Reszie image directory
+    # return [String]
     def image_dir
-      # Reszie image directory
-      # return [String]
       @image_dir ||= Pathname.new(Rails.root).join("public").to_s
     end
 
