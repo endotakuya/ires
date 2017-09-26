@@ -1,0 +1,6 @@
+Authors:
+========
+
+Jan Schlicht <janschlicht@gmail.com>
+Olivier Amblet <olivier@amblet.net>
+Ruby FFI project contributors
