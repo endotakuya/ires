@@ -15,11 +15,8 @@ RDoc::Task.new(:rdoc) do |rdoc|
 end
 
 
-
-
-
-
 require 'bundler/gem_tasks'
+load 'lib/tasks/ires.rake'
 
 require 'rake/testtask'
 

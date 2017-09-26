@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.description = "Ires is image resizer gem."
   s.license     = "MIT"
 
-  s.files = Dir["{lib,ext,shared}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+  s.files = Dir["{lib,ext,shared}/**/*", "LICENSE", "Rakefile", "README.md"]
 
   # 依存関係
   s.add_dependency "ffi"
