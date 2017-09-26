@@ -80,7 +80,7 @@ $ gem install ires
 $ docker build -t ires:v1 .
 
 # コンテナに入る
-$ docker run -it -v $(pwd):/go/src/github.com/endotakuya/ires -p 3000:3000 ires-go:v1 /bin/bash
+$ docker run -it -v $(pwd):/go/src/github.com/endotakuya/ires -p 3000:3000 ires:v1 /bin/bash
 ```
 
 ## Gemテスト
