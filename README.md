@@ -66,6 +66,12 @@ Or install it yourself as:
 $ gem install ires
 ```
 
+## Caution
+
+- It works only with `linux` and `darwin` now.
+- Can build only linux（.so）in this docker.
+
+
 ## Development
 
 環境はDockerで準備しています
@@ -90,8 +96,10 @@ $ docker run -it -v $(pwd):/go/src/github.com/endotakuya/ires -p 3000:3000 ires-
 $ dep ensure
 
 # shared object として出力する
-$ go build -buildmode=c-shared -o shared/ires.so ext/main.go 
+$ CGO_ENABLED=1 GOOS=linux go build -v -buildmode=c-shared -o shared/linux/ires.so ext/main.go
 ```
+※ 現状のDockerでは、linux環境のみbuildができます  
+※ 他の環境でbuildしたい場合はGCCを追加するか、ホスト側でGoを導入してbuildしてください🙇
 
 ### 2. Railsアプリの起動
 
