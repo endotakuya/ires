@@ -5,7 +5,7 @@ module Ires
 
     # Image resize
     # return [image_tag]
-    def ires_tag(path:, width:, height:, mode: "resize", expire: 7.days, **option)
+    def ires_tag(path:, width:, height:, mode: "resize", expire: 30.days, **option)
       full_path = image_full_path(path.to_s)
 
       # if no image or could not find file path then perform the same action as 'image_tag'
