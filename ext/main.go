@@ -32,10 +32,13 @@ func resizeImage(Uri *C.char, width, height int, Dir *C.char) *C.char {
 		return C.CString(strings.Replace(path, dir, "", -1))
 	}
 
-	inputImg, _ := operate.InputImage(uri, dir)
+	inputImg, _, isImageExist := operate.InputImage(uri, dir)
+	if !isImageExist {
+		return C.CString(uri)
+	}
 	outputImg 	:= resize.Resize(uint(width), uint(height), inputImg, resize.Lanczos3)
 
-	_, filePath := operate.CreateImage(outputImg, path)
+	_, filePath, _ := operate.CreateImage(outputImg, path)
 
 	fileName := strings.Replace(filePath, dir, "", -1)
 	return C.CString(fileName)
@@ -54,7 +57,10 @@ func cropImage(Uri *C.char, width, height int, Dir *C.char) *C.char {
 		return C.CString(strings.Replace(path, dir, "", -1))
 	}
 
-	inputImg, _ := operate.InputImage(uri, dir)
+	inputImg, _, isImageExist := operate.InputImage(uri, dir)
+	if !isImageExist {
+		return C.CString(uri)
+	}
 	outputImg, _ := cutter.Crop(inputImg, cutter.Config{
 		Width:  width,
 		Height: height,
@@ -62,7 +68,7 @@ func cropImage(Uri *C.char, width, height int, Dir *C.char) *C.char {
 		Options: cutter.Copy,
 	})
 
-	_, filePath := operate.CreateImage(outputImg, path)
+	_, filePath, _ := operate.CreateImage(outputImg, path)
 
 	fileName := strings.Replace(filePath, dir, "", -1)
 	return C.CString(fileName)
@@ -81,9 +87,12 @@ func resizeToCropImage(Uri *C.char, width, height int, Dir *C.char) *C.char {
 		return C.CString(strings.Replace(path, dir, "", -1))
 	}
 
-	inputImg, imgPath := operate.InputImage(uri, dir)
+	inputImg, imgPath, isImageExist := operate.InputImage(uri, dir)
+	if !isImageExist {
+		return C.CString(uri)
+	}
 	outputImg := operate.ResizeToCrop(imgPath, size, inputImg)
-	_, filePath := operate.CreateImage(outputImg, path)
+	_, filePath, _ := operate.CreateImage(outputImg, path)
 
 	fileName := strings.Replace(filePath, dir, "", -1)
 	return C.CString(fileName)

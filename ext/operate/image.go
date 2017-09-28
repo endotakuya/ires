@@ -12,17 +12,17 @@ import (
 )
 
 // 入力画像
-func InputImage(uri, dir string) (image.Image, string) {
+func InputImage(uri, dir string) (image.Image, string, bool) {
 	if util.IsLocalFile(uri) {
-		return LocalImage(uri), uri
+		return LocalImage(uri), uri, true
 	} else {
-		img, path := DownloadImage(uri, util.NewImagePath(uri, dir, 3))
-		return img, path
+		img, path, isImageExist := DownloadImage(uri, util.NewImagePath(uri, dir, 3))
+		return img, path, isImageExist
 	}
 }
 
 // http経由での画像を保存
-func DownloadImage(uri, path string) (image.Image, string) {
+func DownloadImage(uri, path string) (image.Image, string, bool) {
 	res, err := http.Get(uri)
 	if err != nil {
 		panic(err)
@@ -31,13 +31,13 @@ func DownloadImage(uri, path string) (image.Image, string) {
 
 	img, _, err := image.Decode(res.Body)
 	if err != nil {
-		panic(err)
+		return nil, path, false
 	}
 	return CreateImage(img, path)
 }
 
 // 画像を作成
-func CreateImage(img image.Image, path string) (image.Image, string) {
+func CreateImage(img image.Image, path string) (image.Image, string, bool) {
 	file, err := os.Create(path)
 	if err != nil {
 		panic(err)
@@ -46,7 +46,7 @@ func CreateImage(img image.Image, path string) (image.Image, string) {
 
 	jpeg.Encode(file, img, nil)
 
-	return LocalImage(path), path
+	return LocalImage(path), path, true
 }
 
 // ローカルの画像を取得

@@ -1,4 +1,4 @@
-require "ffi"
+require 'ffi'
 require 'ires/util'
 
 module Ires
