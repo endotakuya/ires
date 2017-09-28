@@ -1,4 +1,8 @@
 # Ires
+
+[![Gem Version](https://badge.fury.io/rb/ires.svg)](https://badge.fury.io/rb/ires)
+
+
 `Ires` is image resizer gem.
 
 ## Usage
