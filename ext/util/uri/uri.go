@@ -26,19 +26,16 @@ func getImageName(uri string) (string, string) {
 }
 
 // 画像のフルパスを生成
-func NewImagePath(uri, dir string, mode int, size ...int) string {
-	name := NewImageName(uri, size...)
+func NewImagePath(uri, dir, expire string, mode int, size ...int) string {
+	name := NewImageName(uri, expire)
 	return FilePath(name, dir, mode, size...)
 }
 
 // ファイル名を生成
-func NewImageName(uri string, size ...int) string {
+func NewImageName(uri, expire string) string {
 	imageName, ext := getImageName(uri)
-	if len(size) == 2 {
-		imageName += "_" + PrefixSize(size...)
-	}
-	imageName += ext
-	return imageName
+	fullImageName := expire + "_" + imageName + ext
+	return fullImageName
 }
 
 // 画像を保存するパスの設定
@@ -53,10 +50,10 @@ func FilePath(name string, d string, mode int, size ...int) string {
 	// 画像格納先
 	var oDir string
 	switch mode {
-	case 0: 	oDir = "ires/resize"
-	case 1: 	oDir = "ires/crop"
-	case 2: 	oDir = "ires/resize_to_crop"
-	default: 	oDir = "ires/original"
+	case 0: oDir = "ires/resize"
+	case 1: oDir = "ires/crop"
+	case 2: oDir = "ires/resize_to_crop"
+	case 3: oDir = "ires/original"
 	}
 
 	var prefix string
