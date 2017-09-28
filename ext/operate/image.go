@@ -12,11 +12,11 @@ import (
 )
 
 // 入力画像
-func InputImage(uri, dir string) (image.Image, string, bool) {
+func InputImage(uri, path string) (image.Image, string, bool) {
 	if util.IsLocalFile(uri) {
 		return LocalImage(uri), uri, true
 	} else {
-		img, path, isImageExist := DownloadImage(uri, util.NewImagePath(uri, dir, 3))
+		img, path, isImageExist := DownloadImage(uri, path)
 		return img, path, isImageExist
 	}
 }

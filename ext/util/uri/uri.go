@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"io/ioutil"
+	"time"
 )
 
 // ローカルの画像かどうか
@@ -26,19 +26,16 @@ func getImageName(uri string) (string, string) {
 }
 
 // 画像のフルパスを生成
-func NewImagePath(uri, dir string, mode int, size ...int) string {
-	name := NewImageName(uri, size...)
+func NewImagePath(uri, dir, expire string, mode int, size ...int) string {
+	name := NewImageName(uri, expire)
 	return FilePath(name, dir, mode, size...)
 }
 
 // ファイル名を生成
-func NewImageName(uri string, size ...int) string {
+func NewImageName(uri, expire string) string {
 	imageName, ext := getImageName(uri)
-	if len(size) == 2 {
-		imageName += "_" + PrefixSize(size...)
-	}
-	imageName += ext
-	return imageName
+	fullImageName := expire + "_" + imageName + ext
+	return fullImageName
 }
 
 // 画像を保存するパスの設定
@@ -53,10 +50,10 @@ func FilePath(name string, d string, mode int, size ...int) string {
 	// 画像格納先
 	var oDir string
 	switch mode {
-	case 0: 	oDir = "ires/resize"
-	case 1: 	oDir = "ires/crop"
-	case 2: 	oDir = "ires/resize_to_crop"
-	default: 	oDir = "ires/original"
+	case 0: oDir = "ires/resize"
+	case 1: oDir = "ires/crop"
+	case 2: oDir = "ires/resize_to_crop"
+	case 3: oDir = "ires/original"
 	}
 
 	var prefix string
@@ -86,11 +83,23 @@ func PrefixSize(size ...int) string {
 }
 
 // リサイズ済みのファイルがあれば、処理せず返す
-func IsEmptyImage(path string) bool {
-	_, err := ioutil.ReadFile(path)
-	if err != nil {
+func IsExistsImage(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
 		return true
 	} else {
 		return false
+	}
+}
+
+// 有効期限に達した画像を削除
+func DeleteExpireImage(uri, dir string, mode int, size ...int) {
+	today := time.Now().Format("20060102")
+	path := NewImagePath(uri, dir, today, mode, size...)
+	_, err := os.Stat(path)
+	if err == nil {
+		if err := os.Remove(path); err != nil {
+			panic(err)
+		}
 	}
 }
