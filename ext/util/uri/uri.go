@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"io/ioutil"
+	"time"
 )
 
 // ローカルの画像かどうか
@@ -83,11 +83,23 @@ func PrefixSize(size ...int) string {
 }
 
 // リサイズ済みのファイルがあれば、処理せず返す
-func IsEmptyImage(path string) bool {
-	_, err := ioutil.ReadFile(path)
-	if err != nil {
+func IsExistsImage(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
 		return true
 	} else {
 		return false
+	}
+}
+
+// 有効期限に達した画像を削除
+func DeleteExpireImage(uri, dir string, mode int, size ...int) {
+	today := time.Now().Format("20060102")
+	path := NewImagePath(uri, dir, today, mode, size...)
+	_, err := os.Stat(path)
+	if err == nil {
+		if err := os.Remove(path); err != nil {
+			panic(err)
+		}
 	}
 }

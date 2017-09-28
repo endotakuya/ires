@@ -30,8 +30,11 @@ func resizeImage(Uri *C.char, width, height int, Dir, Expire *C.char) *C.char {
 	path := util.NewImagePath(uri, dir, expire, IMAGE_MODE_RESIZE, size...)
 	originalPath := util.NewImagePath(uri, dir, expire, IMAGE_MODE_ORIGINAL)
 
+	// Delete the expiration date image
+	util.DeleteExpireImage(uri, dir, IMAGE_MODE_RESIZE, size...)
+
 	// When the image exists, return the image path
-	if !util.IsEmptyImage(path) {
+	if util.IsExistsImage(path) {
 		return C.CString(strings.Replace(path, dir, "", -1))
 	}
 
@@ -57,8 +60,11 @@ func cropImage(Uri *C.char, width, height int, Dir, Expire *C.char) *C.char {
 	path := util.NewImagePath(uri, dir, expire, IMAGE_MODE_CROP, size...)
 	originalPath := util.NewImagePath(uri, dir, expire, IMAGE_MODE_ORIGINAL)
 
+	// Delete the expiration date image
+	util.DeleteExpireImage(uri, dir, IMAGE_MODE_CROP, size...)
+
 	// When the image exists, return the image path
-	if !util.IsEmptyImage(path) {
+	if util.IsExistsImage(path) {
 		return C.CString(strings.Replace(path, dir, "", -1))
 	}
 
@@ -89,8 +95,11 @@ func resizeToCropImage(Uri *C.char, width, height int, Dir, Expire *C.char) *C.c
 	path := util.NewImagePath(uri, dir, expire, IMAGE_MODE_RESIZE_TO_CROP, size...)
 	originalPath := util.NewImagePath(uri, dir, expire, IMAGE_MODE_ORIGINAL)
 
+	// Delete the expiration date image
+	util.DeleteExpireImage(uri, dir, IMAGE_MODE_RESIZE_TO_CROP, size...)
+
 	// When the image exists, return the image path
-	if !util.IsEmptyImage(path) {
+	if util.IsExistsImage(path) {
 		return C.CString(strings.Replace(path, dir, "", -1))
 	}
 
