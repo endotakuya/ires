@@ -19,32 +19,51 @@
 | Cropping                   | crop                 |
 | Rsize after Cropping       | rsize_to_crop        | 
 
+
+### Specify cache expiration
+
+Default: **30days**
+
+```erb
+<%= ires_tag( path: "/image.jpg", width: 400, height: 300, expire: 7.days ) %>
+```
+
 ### Saved directory
 
 ```
 .
-└── public
-    └── ires
-        ├── crop
-        │   └── 300x220
-        │       └── image_300x220.jpg
-        ├── original
-        │   └── original
-        │       └── image.jpg
-        ├── resize
-        │   ├── 200x150
-        │   │   └── image_200x150.jpg
-        │   ├── 300x220
-        │   │   └── image_300x220.jpg
-        │   ├── 300x400
-        │   │   └── image_300x400.jpg
-        │   ├── 400x300
-        │   │   └── image_400x300.jpg
-        │   └── 90x120
-        │       └── image_90x120.jpg
-        └── resize_to_crop
-            └── 300x220
-                └── image_300x220.jpg
+└──  public
+    ├── image.jpg
+    └── ires
+        ├── crop
+        │   ├── 150x150
+        │   │   └── 20171012_image.jpg
+        │   ├── 200x170
+        │   │   └── 20171019_image.jpg
+        │   ├── 400x300
+        │   │   └── 20171028_image.jpg
+        │   └── 640x480
+        │       └── 20171005_image.jpg
+        ├── original
+        │   └── original
+        ├── resize
+        │   ├── 150x150
+        │   │   └── 20171012_image.jpg
+        │   ├── 200x170
+        │   │   └── 20171019_image.jpg
+        │   ├── 400x300
+        │   │   └── 20171028_image.jpg
+        │   └── 640x480
+        │       └── 20171005_image.jpg
+        └── resize_to_crop
+            ├── 150x150
+            │   └── 20171012_image.jpg
+            ├── 200x170
+            │   └── 20171019_image.jpg
+            ├── 400x300
+            │   └── 20171028_image.jpg
+            └── 640x480
+                └── 20171005_image.jpg
 ```
 
 `original` directory where downloaded images are saved.
