@@ -1,3 +1,5 @@
+require 'net/http'
+
 module Ires
   module ViewHelper
 
@@ -5,6 +7,9 @@ module Ires
     # return [image_tag]
     def ires_tag(path:, width:, height:, mode: "resize", **option)
       full_path = image_full_path(path.to_s)
+
+      # if no image or could not find file path then perform the same action as 'image_tag'
+      return image_tag(path, option) if !File.exist?(full_path) && !full_path.include?("http")
 
       # Reszie image 
       case mode
