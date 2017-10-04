@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   # 依存関係
   s.add_dependency "ffi"
-  s.add_dependency "activesupport"
+  s.add_dependency "activesupport", ">= 4.1.8"
   
   # テスト用
   s.add_development_dependency "rails", ">= 5.0.0"
