@@ -6,11 +6,11 @@ module Ires
       # Reszie image directory
       # return [none(ffi)]
       def current_os
-        if ["darwin", "linux"].include?(os)
-          return os
+        if ['darwin', 'linux'].include?(os)
+          os
         else
           logger.fatal "Ires is not supported by this #{os}"
-          return nil
+          nil
         end
       end
         
@@ -21,15 +21,15 @@ module Ires
           host_os = RbConfig::CONFIG['host_os']
           case host_os
           when /mswin|msys|mingw|cygwin|bccwin|wince|emc/
-            "windows"
+            'windows'
           when /darwin|mac os/
-            "darwin"
+            'darwin'
           when /linux/
-            "linux"
+            'linux'
           when /solaris|bsd/
-            "unix"
+            'unix'
           else
-            "unknown"
+            'unknown'
           end
         )
       end

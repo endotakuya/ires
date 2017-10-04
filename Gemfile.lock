@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     ires (0.1.1)
-      activesupport
+      activesupport (>= 4.1.8)
       ffi
 
 GEM
