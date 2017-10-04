@@ -1,4 +1,5 @@
 require 'net/http'
+require 'action_view/helpers'
 
 module Ires
   module ViewHelper
