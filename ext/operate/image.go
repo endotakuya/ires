@@ -1,8 +1,12 @@
 package operate
 
 import (
+	"bytes"
 	"image"
+	"image/gif"
 	"image/jpeg"
+	"image/png"
+	"io"
 	"net/http"
 	"os"
 
@@ -11,17 +15,19 @@ import (
 	"github.com/oliamb/cutter"
 )
 
-// 入力画像
+
 func InputImage(uri, path string) (image.Image, string, bool) {
 	if util.IsLocalFile(uri) {
-		return LocalImage(uri), uri, true
+		img, format := LocalImage(uri)
+		return img, format, true
 	} else {
 		img, path, isImageExist := DownloadImage(uri, path)
 		return img, path, isImageExist
 	}
 }
 
-// http経由での画像を保存
+
+// Save http image
 func DownloadImage(uri, path string) (image.Image, string, bool) {
 	res, err := http.Get(uri)
 	if err != nil {
@@ -29,28 +35,40 @@ func DownloadImage(uri, path string) (image.Image, string, bool) {
 	}
 	defer res.Body.Close()
 
-	img, _, err := image.Decode(res.Body)
+	header, r := copyReader(res.Body)
+	format := formatSearch(r)
+
+	img, _, err := image.Decode(io.MultiReader(header, res.Body))
 	if err != nil {
 		return nil, path, false
 	}
-	return CreateImage(img, path)
+	return CreateImage(img, path, format)
 }
 
-// 画像を作成
-func CreateImage(img image.Image, path string) (image.Image, string, bool) {
+
+func CreateImage(img image.Image, path, format string) (image.Image, string, bool) {
 	file, err := os.Create(path)
 	if err != nil {
 		panic(err)
 	}
 	defer file.Close()
 
-	jpeg.Encode(file, img, nil)
+	switch format {
+	case "jpeg":
+		jpeg.Encode(file, img, nil)
+	case "png":
+		png.Encode(file, img)
+	case "gif":
+		gif.Encode(file, img, nil)
+	default:
+		jpeg.Encode(file, img, nil)
+	}
 
-	return LocalImage(path), path, true
+	return img, path, true
 }
 
-// ローカルの画像を取得
-func LocalImage(uri string) image.Image {
+
+func LocalImage(uri string) (image.Image, string) {
 	file, err := os.Open(uri)
 	if err != nil{
 		panic(err)
@@ -58,14 +76,17 @@ func LocalImage(uri string) image.Image {
 	defer file.Close()
 
 	// Decode jpeg into image.Image
-	img, err := jpeg.Decode(file)
+	header, r := copyReader(file)
+	format := formatSearch(r)
+
+	img, _, err := image.Decode(io.MultiReader(header, file))
 	if err != nil {
 		panic(err)
 	}
-	return img
+	return img, format
 }
 
-// リサイズ + 切り取り
+
 func ResizeToCrop(path string, size []int, inputImg image.Image) image.Image {
 	var outputImg image.Image
 	isAsp, conf := isValidAspectRatio(path, size)
@@ -98,7 +119,7 @@ func ResizeToCrop(path string, size []int, inputImg image.Image) image.Image {
 	return outputImg
 }
 
-// 変更するサイズと画像のアスペクト比が一致するかどうか
+
 func isValidAspectRatio(path string, size []int) (bool, image.Config) {
 	conf := imageConfig(path)
 	aspH := (conf.Height * size[0]) / conf.Width
@@ -109,7 +130,7 @@ func isValidAspectRatio(path string, size []int) (bool, image.Config) {
 	}
 }
 
-// 入力画像の情報を取得
+
 func imageConfig(path string) image.Config {
 	file, err := os.Open(path)
 	if err != nil {
@@ -124,7 +145,7 @@ func imageConfig(path string) image.Config {
 	return conf
 }
 
-// アスペクト比の異なる画像に対するモード設定
+
 func resizeMode(conf image.Config, size []int) int {
 	if conf.Width >= conf.Height && size[0] >= size[1] {
 		return 1
@@ -136,4 +157,20 @@ func resizeMode(conf image.Config, size []int) int {
 		return 4
 	}
 	return 0
+}
+
+
+func formatSearch(r io.Reader) string{
+	_, format, err := image.DecodeConfig(r)
+	if err != nil {
+		return "jpeg"
+	}
+	return format
+}
+
+
+func copyReader(body io.Reader) (io.Reader, io.Reader) {
+	header := bytes.NewBuffer(nil)
+	r := io.TeeReader(body, header)
+	return header, r
 }
