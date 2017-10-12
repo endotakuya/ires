@@ -2,19 +2,8 @@ package main
 
 import (
 	"C"
-	"strings"
 
-	"github.com/nfnt/resize"
-	"github.com/oliamb/cutter"
-	"github.com/endotakuya/ires/ext/util/uri"
-	"github.com/endotakuya/ires/ext/operate"
-)
-
-const (
-	IMAGE_MODE_RESIZE int = iota
-	IMAGE_MODE_CROP
-	IMAGE_MODE_RESIZE_TO_CROP
-	IMAGE_MODE_ORIGINAL
+	"github.com/endotakuya/ires/ext/ires"
 )
 
 func init() {}
@@ -26,28 +15,15 @@ func resizeImage(Uri *C.char, width, height int, Dir, Expire *C.char) *C.char {
 	dir 	:= C.GoString(Dir)
 	expire	:= C.GoString(Expire)
 
-	size := []int{width, height}
-	path := util.NewImagePath(uri, dir, expire, IMAGE_MODE_RESIZE, size...)
-	originalPath := util.NewImagePath(uri, dir, expire, IMAGE_MODE_ORIGINAL)
-
-	// Delete the expiration date image
-	util.DeleteExpireImage(uri, dir, IMAGE_MODE_RESIZE, size...)
-
-	// When the image exists, return the image path
-	if util.IsExistsImage(path) {
-		return C.CString(strings.Replace(path, dir, "", -1))
+	r := &ires.Request{
+		Uri: uri,
+		Width: width,
+		Height: height,
+		Dir: dir,
+		Expire: expire,
 	}
 
-	inputImg, _, isImageExist := operate.InputImage(uri, originalPath)
-	if !isImageExist {
-		return C.CString(uri)
-	}
-	outputImg 	:= resize.Resize(uint(width), uint(height), inputImg, resize.Lanczos3)
-
-	_, filePath, _ := operate.CreateImage(outputImg, path)
-
-	fileName := strings.Replace(filePath, dir, "", -1)
-	return C.CString(fileName)
+	return C.CString(r.Resize())
 }
 
 //export cropImage
@@ -56,33 +32,15 @@ func cropImage(Uri *C.char, width, height int, Dir, Expire *C.char) *C.char {
 	dir 	:= C.GoString(Dir)
 	expire	:= C.GoString(Expire)
 
-	size := []int{width, height}
-	path := util.NewImagePath(uri, dir, expire, IMAGE_MODE_CROP, size...)
-	originalPath := util.NewImagePath(uri, dir, expire, IMAGE_MODE_ORIGINAL)
-
-	// Delete the expiration date image
-	util.DeleteExpireImage(uri, dir, IMAGE_MODE_CROP, size...)
-
-	// When the image exists, return the image path
-	if util.IsExistsImage(path) {
-		return C.CString(strings.Replace(path, dir, "", -1))
-	}
-
-	inputImg, _, isImageExist := operate.InputImage(uri, originalPath)
-	if !isImageExist {
-		return C.CString(uri)
-	}
-	outputImg, _ := cutter.Crop(inputImg, cutter.Config{
-		Width:  width,
+	r := &ires.Request{
+		Uri: uri,
+		Width: width,
 		Height: height,
-		Mode: cutter.Centered,
-		Options: cutter.Copy,
-	})
+		Dir: dir,
+		Expire: expire,
+	}
 
-	_, filePath, _ := operate.CreateImage(outputImg, path)
-
-	fileName := strings.Replace(filePath, dir, "", -1)
-	return C.CString(fileName)
+	return C.CString(r.Crop())
 }
 
 //export resizeToCropImage
@@ -91,25 +49,13 @@ func resizeToCropImage(Uri *C.char, width, height int, Dir, Expire *C.char) *C.c
 	dir 	:= C.GoString(Dir)
 	expire	:= C.GoString(Expire)
 
-	size := []int{width, height}
-	path := util.NewImagePath(uri, dir, expire, IMAGE_MODE_RESIZE_TO_CROP, size...)
-	originalPath := util.NewImagePath(uri, dir, expire, IMAGE_MODE_ORIGINAL)
-
-	// Delete the expiration date image
-	util.DeleteExpireImage(uri, dir, IMAGE_MODE_RESIZE_TO_CROP, size...)
-
-	// When the image exists, return the image path
-	if util.IsExistsImage(path) {
-		return C.CString(strings.Replace(path, dir, "", -1))
+	r := &ires.Request{
+		Uri: uri,
+		Width: width,
+		Height: height,
+		Dir: dir,
+		Expire: expire,
 	}
 
-	inputImg, imgPath, isImageExist := operate.InputImage(uri, originalPath)
-	if !isImageExist {
-		return C.CString(uri)
-	}
-	outputImg := operate.ResizeToCrop(imgPath, size, inputImg)
-	_, filePath, _ := operate.CreateImage(outputImg, path)
-
-	fileName := strings.Replace(filePath, dir, "", -1)
-	return C.CString(fileName)
+	return C.CString(r.ResizeToCrop())
 }
