@@ -37,13 +37,13 @@ func (r *Request) Resize() string {
 		return r.imagePath(path)
 	}
 
-	inputImg, _, isImageExist := operate.InputImage(r.Uri, r.originalFullPath())
+	inputImg, format, isImageExist := operate.InputImage(r.Uri, r.originalFullPath())
 	if !isImageExist {
 		return r.Uri
 	}
 
 	outputImg 		:= resize.Resize(uint(r.Width), uint(r.Height), inputImg, resize.Lanczos3)
-	_, fullPath, _ 	:= operate.CreateImage(outputImg, path)
+	_, fullPath, _ 	:= operate.CreateImage(outputImg, path, format)
 
 	return r.imagePath(fullPath)
 }
@@ -60,7 +60,7 @@ func (r *Request) Crop() string {
 		return r.imagePath(path)
 	}
 
-	inputImg, _, isImageExist := operate.InputImage(r.Uri, r.originalFullPath())
+	inputImg, format, isImageExist := operate.InputImage(r.Uri, r.originalFullPath())
 	if !isImageExist {
 		return r.Uri
 	}
@@ -71,7 +71,7 @@ func (r *Request) Crop() string {
 		Mode: cutter.Centered,
 		Options: cutter.Copy,
 	})
-	_, fullPath, _ := operate.CreateImage(outputImg, path)
+	_, fullPath, _ := operate.CreateImage(outputImg, path, format)
 
 	return r.imagePath(fullPath)
 }
@@ -88,13 +88,14 @@ func (r *Request) ResizeToCrop() string {
 		return r.imagePath(path)
 	}
 
-	inputImg, imgPath, isImageExist := operate.InputImage(r.Uri, r.originalFullPath())
+	originalImagePath := r.originalFullPath()
+	inputImg, format, isImageExist := operate.InputImage(r.Uri, originalImagePath)
 	if !isImageExist {
 		return r.Uri
 	}
 
-	outputImg 		:= operate.ResizeToCrop(imgPath, size, inputImg)
-	_, fullPath, _ 	:= operate.CreateImage(outputImg, path)
+	outputImg 		:= operate.ResizeToCrop(originalImagePath, size, inputImg)
+	_, fullPath, _ 	:= operate.CreateImage(outputImg, path, format)
 
 	return r.imagePath(fullPath)
 }
