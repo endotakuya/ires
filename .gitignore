@@ -13,8 +13,4 @@ test/dummy/public/ires/*
 !test/dummy/public/ires/.keep
 
 # go resouce
-ext/*.h
-ext/*.so
-ext/vendor
-ext/shared/*
-!ext/shared/.keep
+ext/vendor/
