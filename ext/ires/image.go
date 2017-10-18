@@ -130,7 +130,6 @@ func ResizeToCrop(i *Ires, inputImg image.Image) image.Image {
 
 // Check expiration date
 func (i *Ires) DeleteExpireImage(mode int) {
-
 	today := time.Now().Format("20060102")
 	dir := i.ReadImageDir(mode)
 	files, err := ioutil.ReadDir(dir)

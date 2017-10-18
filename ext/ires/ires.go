@@ -3,8 +3,6 @@ package ires
 import (
 	"github.com/nfnt/resize"
 	"github.com/oliamb/cutter"
-
-	"fmt"
 )
 
 const (
@@ -35,9 +33,9 @@ func (i *Ires) Resize() string {
 	// Delete the expiration date image
 	distPath := i.ImagePath(IMAGE_MODE_RESIZE)
 	// When the image exists, return the image path
-	//if isExistsImage(srcPath) {
-	//	return i.targetImagePath(srcPath)
-	//}
+	if IsExistsImage(distPath) {
+		return i.TargetImagePath(distPath)
+	}
 
 	inputImg, format, isExists := InputImage(i)
 	if !isExists {
@@ -46,7 +44,6 @@ func (i *Ires) Resize() string {
 
 	outputImg 		:= resize.Resize(uint(i.Width), uint(i.Height), inputImg, resize.Lanczos3)
 	CreateImage(outputImg, distPath, format)
-	fmt.Println(format, distPath)
 	return i.TargetImagePath(distPath)
 }
 
@@ -57,9 +54,9 @@ func (i *Ires) Crop() string {
 
 	distPath := i.ImagePath(IMAGE_MODE_CROP)
 	// When the image exists, return the image path
-	//if isExistsImage(srcPath) {
-	//	return i.targetImagePath(srcPath)
-	//}
+	if IsExistsImage(distPath) {
+		return i.TargetImagePath(distPath)
+	}
 
 	inputImg, format, isImageExist := InputImage(i)
 	if !isImageExist {
@@ -84,10 +81,9 @@ func (i *Ires) ResizeToCrop() string {
 
 	distPath := i.ImagePath(IMAGE_MODE_RESIZE_TO_CROP)
 	// When the image exists, return the image path
-	//if isExistsImage(srcPath) {
-	//	return i.targetImagePath(srcPath)
-	//}
-
+	if IsExistsImage(distPath) {
+		return i.TargetImagePath(distPath)
+	}
 
 	inputImg, format, isImageExist := InputImage(i)
 	if !isImageExist {

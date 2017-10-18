@@ -84,7 +84,7 @@ func PrefixSize(s Size) string {
 
 
 // リサイズ済みのファイルがあれば、処理せず返す
-func isExistsImage(path string) bool {
+func IsExistsImage(path string) bool {
 	_, err := os.Stat(path)
 	if err == nil {
 		return true
