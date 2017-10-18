@@ -2,7 +2,6 @@ package ires
 
 import (
 	"bytes"
-	"fmt"
 	"image"
 	"image/gif"
 	"image/jpeg"
@@ -179,7 +178,6 @@ func formatSearch(r io.Reader) string{
 	if err != nil {
 		return "jpeg"
 	}
-	fmt.Println(format)
 	return format
 }
 

@@ -7,10 +7,6 @@ import (
 	"strings"
 
 	"github.com/goware/urlx"
-
-	// Test
-	"fmt"
-	"log"
 )
 
 // Input image type is Local or HTTP
@@ -30,9 +26,8 @@ func imageName(i *Ires, mode int) string {
 	fileName := splitPath[len(splitPath)-1]
 	// ex. .jpg
 	ext := filepath.Ext(fileName)
-
-	ext = strings.Replace(ext, "?", "_", -1)
 	name := strings.Replace(fileName, ext, "", 1)
+	ext = strings.Replace(ext, "?", "_", -1)
 
 	var prefix string
 	if mode == 3 {
@@ -118,9 +113,8 @@ func localPath(mode int) string {
 
 // if http image, parse URL & make directory
 func remotePath(i *Ires) string {
-	fmt.Println(i.Uri)
 	u, err := urlx.Parse(i.Uri)
-	dir := []string{}
+	dir := []string{"ires"}
 	if err != nil {
 		panic(err)
 	}
@@ -128,8 +122,6 @@ func remotePath(i *Ires) string {
 	dir = append(dir, u.Host)
 	path := strings.Split(u.Path, "/")
 	dir = append(dir, path[1:len(path)-1]...)
-
-	log.Println(dir)
 
 	return strings.Join(dir, "/")
 }
