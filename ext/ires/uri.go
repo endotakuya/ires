@@ -38,10 +38,11 @@ func ImageName(i *Ires, mode int) string {
 	}
 
 	var prefix string
-	if mode == 3 {
-		prefix = "original"
-	} else {
-		prefix = PrefixSize(i.Size)
+	switch mode {
+	case 0: prefix = PrefixSize(i.Size) + "_resize"
+	case 1: prefix = PrefixSize(i.Size) + "_crop"
+	case 2: prefix = PrefixSize(i.Size) + "_resize_to_crop"
+	case 3: prefix = "original"
 	}
 
 	return i.Expire + "_" + name + "_" + prefix + ext
