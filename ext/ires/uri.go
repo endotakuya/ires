@@ -9,8 +9,9 @@ import (
 	"github.com/goware/urlx"
 )
 
+
 // Input image type is Local or HTTP
-func isLocalFile(path string) bool {
+func IsLocalFile(path string) bool {
 	if strings.Index(path, "http") == -1 {
 		return true
 	} else {
@@ -18,29 +19,36 @@ func isLocalFile(path string) bool {
 	}
 }
 
+
 // Generate image name
-func imageName(i *Ires, mode int) string {
+func ImageName(i *Ires, mode int) string {
 	splitPath 	:= strings.Split(i.Uri, "/")
 
 	// ex. sample.jpg
 	fileName := splitPath[len(splitPath)-1]
 	// ex. .jpg
 	ext := filepath.Ext(fileName)
+
 	name := strings.Replace(fileName, ext, "", 1)
-	ext = strings.Replace(ext, "?", "_", -1)
+
+	extInfo := strings.Split(ext, "?")
+	if len(extInfo) > 1 {
+		ext = extInfo[0]
+		name += "_" + strings.Join(extInfo[1:], "")
+	}
 
 	var prefix string
 	if mode == 3 {
 		prefix = "original"
 	} else {
-		prefix = prefixSize(i.Size)
+		prefix = PrefixSize(i.Size)
 	}
 
 	return i.Expire + "_" + name + "_" + prefix + ext
 }
 
 // Generate image path
-func (i *Ires) imagePath(mode int) string {
+func (i *Ires) ImagePath(mode int) string {
 	paths := []rune(i.Dir)
 	pathsLastIndex := len(paths) - 1
 	lastChar := string(paths[pathsLastIndex])
@@ -51,9 +59,9 @@ func (i *Ires) imagePath(mode int) string {
 
 	var oDir string
 	if i.IsLocal {
-		oDir = localPath(mode)
+		oDir = LocalPath(mode)
 	} else {
-		oDir = remotePath(i)
+		oDir = RemotePath(i)
 	}
 
 	// Create directory
@@ -64,13 +72,13 @@ func (i *Ires) imagePath(mode int) string {
 		}
 	}
 
-	name := imageName(i, mode)
+	name := ImageName(i, mode)
 	return filepath.Join(oPath, name)
 }
 
 // Create prefix by size
 // ex. 640x480
-func prefixSize(s Size) string {
+func PrefixSize(s Size) string {
 	return strconv.Itoa(s.Width) + "x" + strconv.Itoa(s.Height)
 }
 
@@ -90,16 +98,16 @@ func isExistsImage(path string) bool {
 func (i *Ires) ReadImageDir(mode int) string {
 	var dir string
 	if i.IsLocal {
-		dir = localPath(mode)
+		dir = LocalPath(mode)
 	} else {
-		dir = remotePath(i)
+		dir = RemotePath(i)
 	}
 	return filepath.Join(i.Dir, dir)
 }
 
 
 // if local image, create ires directory
-func localPath(mode int) string {
+func LocalPath(mode int) string {
 	var dir string
 	switch mode {
 	case 0: dir = "ires/resize"
@@ -112,7 +120,7 @@ func localPath(mode int) string {
 
 
 // if http image, parse URL & make directory
-func remotePath(i *Ires) string {
+func RemotePath(i *Ires) string {
 	u, err := urlx.Parse(i.Uri)
 	dir := []string{"ires"}
 	if err != nil {
@@ -128,6 +136,6 @@ func remotePath(i *Ires) string {
 
 
 // Optimize image path
-func (i *Ires) targetImagePath(path string) string {
+func (i *Ires) TargetImagePath(path string) string {
 	return strings.Replace(path, i.Dir, "", -1)
 }

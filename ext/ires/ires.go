@@ -3,6 +3,8 @@ package ires
 import (
 	"github.com/nfnt/resize"
 	"github.com/oliamb/cutter"
+
+	"fmt"
 )
 
 const (
@@ -31,21 +33,21 @@ func (i *Ires) Resize() string {
 	i.DeleteExpireImage(IMAGE_MODE_RESIZE)
 
 	// Delete the expiration date image
-	srcPath := i.imagePath(IMAGE_MODE_RESIZE)
+	distPath := i.ImagePath(IMAGE_MODE_RESIZE)
 	// When the image exists, return the image path
 	//if isExistsImage(srcPath) {
 	//	return i.targetImagePath(srcPath)
 	//}
 
-	inputImg, format, isExists := inputImage(i)
+	inputImg, format, isExists := InputImage(i)
 	if !isExists {
 		return i.Uri
 	}
 
 	outputImg 		:= resize.Resize(uint(i.Width), uint(i.Height), inputImg, resize.Lanczos3)
-	_, distPath, _ 	:= createImage(outputImg, srcPath, format)
-
-	return i.targetImagePath(distPath)
+	CreateImage(outputImg, distPath, format)
+	fmt.Println(format, distPath)
+	return i.TargetImagePath(distPath)
 }
 
 func (i *Ires) Crop() string {
@@ -53,13 +55,13 @@ func (i *Ires) Crop() string {
 	// Delete the expiration date image
 	i.DeleteExpireImage(IMAGE_MODE_CROP)
 
-	srcPath := i.imagePath(IMAGE_MODE_CROP)
+	distPath := i.ImagePath(IMAGE_MODE_CROP)
 	// When the image exists, return the image path
 	//if isExistsImage(srcPath) {
 	//	return i.targetImagePath(srcPath)
 	//}
 
-	inputImg, format, isImageExist := inputImage(i)
+	inputImg, format, isImageExist := InputImage(i)
 	if !isImageExist {
 		return i.Uri
 	}
@@ -70,9 +72,9 @@ func (i *Ires) Crop() string {
 		Mode: cutter.Centered,
 		Options: cutter.Copy,
 	})
-	_, distPath, _ := createImage(outputImg, srcPath, format)
+	CreateImage(outputImg, distPath, format)
 
-	return i.targetImagePath(distPath)
+	return i.TargetImagePath(distPath)
 }
 
 func (i *Ires) ResizeToCrop() string {
@@ -80,20 +82,20 @@ func (i *Ires) ResizeToCrop() string {
 	// Delete the expiration date image
 	i.DeleteExpireImage(IMAGE_MODE_RESIZE_TO_CROP)
 
-	srcPath := i.imagePath(IMAGE_MODE_RESIZE_TO_CROP)
+	distPath := i.ImagePath(IMAGE_MODE_RESIZE_TO_CROP)
 	// When the image exists, return the image path
 	//if isExistsImage(srcPath) {
 	//	return i.targetImagePath(srcPath)
 	//}
 
 
-	inputImg, format, isImageExist := inputImage(i)
+	inputImg, format, isImageExist := InputImage(i)
 	if !isImageExist {
 		return i.Uri
 	}
 
-	outputImg 		:= resizeToCrop(i ,inputImg)
-	_, fullPath, _ 	:= createImage(outputImg, srcPath, format)
+	outputImg := ResizeToCrop(i ,inputImg)
+	CreateImage(outputImg, distPath, format)
 
-	return i.targetImagePath(fullPath)
+	return i.TargetImagePath(distPath)
 }

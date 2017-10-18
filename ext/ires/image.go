@@ -7,49 +7,49 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
+	"path"
+	"time"
 
 	"github.com/nfnt/resize"
 	"github.com/oliamb/cutter"
-	"io/ioutil"
-	"path"
-	"time"
 )
 
 
 // Input image
-func inputImage(i *Ires) (image.Image, string, bool) {
-	if isLocalFile(i.Uri) {
+func InputImage(i *Ires) (image.Image, string, bool) {
+	if IsLocalFile(i.Uri) {
 		i.IsLocal = true
-		img, format := localImage(i.Uri)
+		img, format := LocalImage(i.Uri)
 		return img, format, true
 	} else {
-		return downloadImage(i)
+		return DownloadImage(i)
 	}
 }
 
 
 // Save http image
-func downloadImage(i *Ires) (image.Image, string, bool) {
+func DownloadImage(i *Ires) (image.Image, string, bool) {
 	res, err := http.Get(i.Uri)
 	if err != nil {
 		panic(err)
 	}
 	defer res.Body.Close()
 
-	header, r := copyReader(res.Body)
-	format := formatSearch(r)
+	header, r := CopyReader(res.Body)
+	format := FormatSearch(r)
 
 	img, _, err := image.Decode(io.MultiReader(header, res.Body))
 	if err != nil {
 		return nil, "", false
 	}
-	return createImage(img, i.imagePath(IMAGE_MODE_ORIGINAL), format)
+	return CreateImage(img, i.ImagePath(IMAGE_MODE_ORIGINAL), format), format, true
 }
 
 
-func createImage(img image.Image, path, format string) (image.Image, string, bool) {
+func CreateImage(img image.Image, path, format string) image.Image {
 	file, err := os.Create(path)
 	if err != nil {
 		panic(err)
@@ -67,11 +67,11 @@ func createImage(img image.Image, path, format string) (image.Image, string, boo
 		jpeg.Encode(file, img, nil)
 	}
 
-	return img, format, true
+	return img
 }
 
 // Load image
-func localImage(uri string) (image.Image, string) {
+func LocalImage(uri string) (image.Image, string) {
 	file, err := os.Open(uri)
 	if err != nil{
 		panic(err)
@@ -79,8 +79,8 @@ func localImage(uri string) (image.Image, string) {
 	defer file.Close()
 
 	// Decode jpeg into image.Image
-	header, r := copyReader(file)
-	format := formatSearch(r)
+	header, r := CopyReader(file)
+	format := FormatSearch(r)
 
 	img, _, err := image.Decode(io.MultiReader(header, file))
 	if err != nil {
@@ -91,10 +91,10 @@ func localImage(uri string) (image.Image, string) {
 
 
 // Resizing & Cropping
-func resizeToCrop(i *Ires, inputImg image.Image) image.Image {
+func ResizeToCrop(i *Ires, inputImg image.Image) image.Image {
 	var outputImg image.Image
-	path := i.imagePath(IMAGE_MODE_ORIGINAL)
-	isAsp, conf := isValidAspectRatio(path, i.Size)
+	path := i.ImagePath(IMAGE_MODE_ORIGINAL)
+	isAsp, conf := IsValidAspectRatio(path, i.Size)
 
 	width  := i.Size.Width
 	height := i.Size.Height
@@ -105,7 +105,7 @@ func resizeToCrop(i *Ires, inputImg image.Image) image.Image {
 		var resizeImg image.Image
 
 		// Resize
-		mode := resizeMode(conf, i.Size)
+		mode := ResizeMode(conf, i.Size)
 		switch mode {
 		case 1, 3:
 			resizeImg = resize.Resize(uint(width), 0, inputImg, resize.Lanczos3)
@@ -135,7 +135,7 @@ func (i *Ires) DeleteExpireImage(mode int) {
 	dir := i.ReadImageDir(mode)
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	for _, file := range files {
@@ -160,8 +160,8 @@ func DeleteImage(path string) {
 
 
 // Verify aspect ratio
-func isValidAspectRatio(path string, s Size) (bool, image.Config) {
-	conf := imageConfig(path)
+func IsValidAspectRatio(path string, s Size) (bool, image.Config) {
+	conf := ImageConfig(path)
 	aspH := (conf.Height * s.Width) / conf.Width
 	if aspH == s.Height {
 		return true, conf
@@ -172,7 +172,7 @@ func isValidAspectRatio(path string, s Size) (bool, image.Config) {
 
 
 // Image config
-func imageConfig(path string) image.Config {
+func ImageConfig(path string) image.Config {
 	file, err := os.Open(path)
 	if err != nil {
 		panic(err)
@@ -188,7 +188,7 @@ func imageConfig(path string) image.Config {
 
 
 // Select image resize mode
-func resizeMode(conf image.Config, s Size) int {
+func ResizeMode(conf image.Config, s Size) int {
 	srcWidth  := s.Width
 	srcHeight := s.Height
 
@@ -207,7 +207,7 @@ func resizeMode(conf image.Config, s Size) int {
 
 // Search image format
 // if defined, return "jpeg"
-func formatSearch(r io.Reader) string{
+func FormatSearch(r io.Reader) string{
 	_, format, err := image.DecodeConfig(r)
 	if err != nil {
 		return "jpeg"
@@ -217,7 +217,7 @@ func formatSearch(r io.Reader) string{
 
 
 // Copy Reader
-func copyReader(body io.Reader) (io.Reader, io.Reader) {
+func CopyReader(body io.Reader) (io.Reader, io.Reader) {
 	header := bytes.NewBuffer(nil)
 	r := io.TeeReader(body, header)
 	return header, r
