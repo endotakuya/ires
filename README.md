@@ -34,43 +34,30 @@ Default: **30days**
 
 ### Saved directory
 
+####  Target image is local
+
 ```
-.
-└──  public
-    ├── image.jpg
-    └── ires
-        ├── crop
-        │   ├── 150x150
-        │   │   └── 20171012_image.jpg
-        │   ├── 200x170
-        │   │   └── 20171019_image.jpg
-        │   ├── 400x300
-        │   │   └── 20171028_image.jpg
-        │   └── 640x480
-        │       └── 20171005_image.jpg
-        ├── original
-        │   └── original
-        ├── resize
-        │   ├── 150x150
-        │   │   └── 20171012_image.jpg
-        │   ├── 200x170
-        │   │   └── 20171019_image.jpg
-        │   ├── 400x300
-        │   │   └── 20171028_image.jpg
-        │   └── 640x480
-        │       └── 20171005_image.jpg
-        └── resize_to_crop
-            ├── 150x150
-            │   └── 20171012_image.jpg
-            ├── 200x170
-            │   └── 20171019_image.jpg
-            ├── 400x300
-            │   └── 20171028_image.jpg
-            └── 640x480
-                └── 20171005_image.jpg
+public
+├── image.jpg
+└── ires
+    ├── crop
+    │   ├── 20171019_image_120x90_crop.jpg
+    │   ├── 20171117_image_200x200_crop.jpg
+    │   └── 20171117_image_400x300_crop.jpg
+    ├── resize
+    │   ├── 20171019_image_120x90_resize.jpg
+    │   ├── 20171117_image_200x200_resize.jpg
+    │   └── 20171117_image_400x300_resize.jpg
+    └── resize_to_crop
+        ├── 20171019_image_120x90_resize_to_crop.jpg
+        ├── 20171117_image_200x200_resize_to_crop.jpg
+        └── 20171117_image_400x300_resize_to_crop.jpg
 ```
 
-`original` directory where downloaded images are saved.
+#### Target image is http
+
+Parse URL & Create directory by parse URL.
+
 
 ## Installation
 Add this line to your application's Gemfile:
@@ -97,34 +84,34 @@ $ gem install ires
 
 ## Development
 
-環境はDockerで準備しています
+Docker environment.
 
 ```shell
 $ docker build -t ires:v1 .
 
-# コンテナに入る
+# Into the ires container.
 $ docker run -it -v $(pwd):/go/src/github.com/endotakuya/ires -p 3000:3000 ires:v1 /bin/bash
 ```
 
-## Gemテスト
+## Gem test
 
-以下、コンテナ内の作業になります
+Working in ires container.
 
-### 1. Go（shared objectの作成）
+### 1. Go（Create a shared object）
 
-パッケージ管理は[dep](https://github.com/golang/dep)を使っています
+Package manager is [dep](https://github.com/golang/dep).
 
 ```shell
-# パッケージの依存関係を解決
+# Dependent resolution
 $ dep ensure
 
-# shared object として出力する
+# Output to a shared object.
 $ CGO_ENABLED=1 GOOS=linux go build -v -buildmode=c-shared -o shared/linux/ires.so ext/main.go
 ```
-※ 現状のDockerでは、linux環境のみbuildができます  
-※ 他の環境でbuildしたい場合はGCCを追加するか、ホスト側でGoを導入してbuildしてください🙇
+※ In the current Docker, you can build only linux environment.  
+※ If you want to build in other environments, add GCC or install Go on the host side.🙇
 
-### 2. Railsアプリの起動
+### 2. Start rails server
 
 ```shell
 $ test/dummy/bin/rails s -b 0.0.0.0

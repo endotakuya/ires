@@ -15,12 +15,15 @@ func resizeImage(Uri *C.char, width, height int, Dir, Expire *C.char) *C.char {
 	dir 	:= C.GoString(Dir)
 	expire	:= C.GoString(Expire)
 
-	r := &ires.Request{
+	r := &ires.Ires{
 		Uri: uri,
-		Width: width,
-		Height: height,
+		Size: ires.Size{
+			Width: width,
+			Height: height,
+		},
 		Dir: dir,
 		Expire: expire,
+		IsLocal: false,
 	}
 
 	return C.CString(r.Resize())
@@ -32,12 +35,15 @@ func cropImage(Uri *C.char, width, height int, Dir, Expire *C.char) *C.char {
 	dir 	:= C.GoString(Dir)
 	expire	:= C.GoString(Expire)
 
-	r := &ires.Request{
+	r := &ires.Ires{
 		Uri: uri,
-		Width: width,
-		Height: height,
+		Size: ires.Size{
+			Width: width,
+			Height: height,
+		},
 		Dir: dir,
 		Expire: expire,
+		IsLocal: false,
 	}
 
 	return C.CString(r.Crop())
@@ -49,12 +55,15 @@ func resizeToCropImage(Uri *C.char, width, height int, Dir, Expire *C.char) *C.c
 	dir 	:= C.GoString(Dir)
 	expire	:= C.GoString(Expire)
 
-	r := &ires.Request{
+	r := &ires.Ires{
 		Uri: uri,
-		Width: width,
-		Height: height,
+		Size: ires.Size{
+			Width: width,
+			Height: height,
+		},
 		Dir: dir,
 		Expire: expire,
+		IsLocal: false,
 	}
 
 	return C.CString(r.ResizeToCrop())

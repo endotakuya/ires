@@ -1,10 +1,6 @@
 package ires
 
 import (
-	"strings"
-
-	"github.com/endotakuya/ires/ext/operate"
-	"github.com/endotakuya/ires/ext/util/uri"
 	"github.com/nfnt/resize"
 	"github.com/oliamb/cutter"
 )
@@ -16,99 +12,91 @@ const (
 	IMAGE_MODE_ORIGINAL
 )
 
-type Request struct {
-	Uri 	string
-	Width 	int
-	Height 	int
-	Dir 	string
-	Expire 	string
+type Size struct {
+	Width, Height int
+}
+
+type Ires struct {
+	Uri 		string
+	Size
+	Dir 		string
+	Expire 		string
+	IsLocal 	bool
 }
 
 
-func (r *Request) Resize() string {
-	size := []int{r.Width, r.Height}
+func (i *Ires) Resize() string {
+	// Check image type
+	i.IsLocalFile()
 
 	// Delete the expiration date image
-	util.DeleteExpireImage(r.Uri, r.Dir, IMAGE_MODE_RESIZE, size...)
+	i.DeleteExpireImage(IMAGE_MODE_RESIZE)
 
-	path := r.fullPath(IMAGE_MODE_RESIZE)
+	distPath := i.ImagePath(IMAGE_MODE_RESIZE)
 	// When the image exists, return the image path
-	if util.IsExistsImage(path) {
-		return r.imagePath(path)
+	if IsExistsImage(distPath) {
+		return i.TargetImagePath(distPath)
 	}
 
-	inputImg, format, isImageExist := operate.InputImage(r.Uri, r.originalFullPath())
+	inputImg, format, isImageExist := InputImage(i)
 	if !isImageExist {
-		return r.Uri
+		return i.Uri
 	}
 
-	outputImg 		:= resize.Resize(uint(r.Width), uint(r.Height), inputImg, resize.Lanczos3)
-	_, fullPath, _ 	:= operate.CreateImage(outputImg, path, format)
-
-	return r.imagePath(fullPath)
+	outputImg 		:= resize.Resize(uint(i.Width), uint(i.Height), inputImg, resize.Lanczos3)
+	CreateImage(outputImg, distPath, format)
+	return i.TargetImagePath(distPath)
 }
 
-func (r *Request) Crop() string {
-	size := []int{r.Width, r.Height}
+func (i *Ires) Crop() string {
+	// Check image type
+	i.IsLocalFile()
 
 	// Delete the expiration date image
-	util.DeleteExpireImage(r.Uri, r.Dir, IMAGE_MODE_CROP, size...)
+	i.DeleteExpireImage(IMAGE_MODE_CROP)
 
-	path := r.fullPath(IMAGE_MODE_CROP)
+	distPath := i.ImagePath(IMAGE_MODE_CROP)
 	// When the image exists, return the image path
-	if util.IsExistsImage(path) {
-		return r.imagePath(path)
+	if IsExistsImage(distPath) {
+		return i.TargetImagePath(distPath)
 	}
 
-	inputImg, format, isImageExist := operate.InputImage(r.Uri, r.originalFullPath())
+	inputImg, format, isImageExist := InputImage(i)
 	if !isImageExist {
-		return r.Uri
+		return i.Uri
 	}
 
 	outputImg, _ := cutter.Crop(inputImg, cutter.Config{
-		Width:  r.Width,
-		Height: r.Height,
+		Width:  i.Width,
+		Height: i.Height,
 		Mode: cutter.Centered,
 		Options: cutter.Copy,
 	})
-	_, fullPath, _ := operate.CreateImage(outputImg, path, format)
+	CreateImage(outputImg, distPath, format)
 
-	return r.imagePath(fullPath)
+	return i.TargetImagePath(distPath)
 }
 
-func (r *Request) ResizeToCrop() string {
-	size := []int{r.Width, r.Height}
+func (i *Ires) ResizeToCrop() string {
+	// Check image type
+	i.IsLocalFile()
 
 	// Delete the expiration date image
-	util.DeleteExpireImage(r.Uri, r.Dir, IMAGE_MODE_RESIZE_TO_CROP, size...)
+	i.DeleteExpireImage(IMAGE_MODE_RESIZE_TO_CROP)
 
-	path := r.fullPath(IMAGE_MODE_RESIZE_TO_CROP)
+	distPath := i.ImagePath(IMAGE_MODE_RESIZE_TO_CROP)
 	// When the image exists, return the image path
-	if util.IsExistsImage(path) {
-		return r.imagePath(path)
+	if IsExistsImage(distPath) {
+		return i.TargetImagePath(distPath)
 	}
 
-	originalImagePath := r.originalFullPath()
-	inputImg, format, isImageExist := operate.InputImage(r.Uri, originalImagePath)
+	inputImg, format, isImageExist := InputImage(i)
 	if !isImageExist {
-		return r.Uri
+		return i.Uri
 	}
 
-	outputImg 		:= operate.ResizeToCrop(originalImagePath, size, inputImg)
-	_, fullPath, _ 	:= operate.CreateImage(outputImg, path, format)
+	outputImg := ResizeToCrop(i ,inputImg)
+	CreateImage(outputImg, distPath, format)
 
-	return r.imagePath(fullPath)
-}
-
-func (r *Request) fullPath(mode int) string {
-	size := []int{ r.Width, r.Height }
-	return util.NewImagePath(r.Uri, r.Dir, r.Expire, mode, size...)
-}
-
-func (r *Request) originalFullPath() string {
-	return util.NewImagePath(r.Uri, r.Dir, r.Expire, IMAGE_MODE_ORIGINAL)
-}
-
-func (r *Request) imagePath(fullPath string) string {
-	return strings.Replace(fullPath, r.Dir, "", -1)
+	return i.TargetImagePath(distPath)
 }

@@ -2,6 +2,24 @@
 
 
 [[projects]]
+  name = "github.com/PuerkitoBio/purell"
+  packages = ["."]
+  revision = "0bcb03f4b4d0a9428594752bd2a3b9aa0a9d4bd4"
+  version = "v1.1.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/PuerkitoBio/urlesc"
+  packages = ["."]
+  revision = "de5bf2ad457846296e2031421a34e2568e304e35"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/goware/urlx"
+  packages = ["."]
+  revision = "e22571dfbd216d3ca34207d9a1d877f38d8f051c"
+
+[[projects]]
   branch = "master"
   name = "github.com/nfnt/resize"
   packages = ["."]
@@ -13,9 +31,21 @@
   revision = "5cd9c24de6524b7251ac6b8600b0ba8f43a85963"
   version = "v0.2.0"
 
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = ["idna"]
+  revision = "1087133bc4af3073e18add999345c6ae75918503"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/text"
+  packages = ["collate","collate/build","internal/colltab","internal/gen","internal/tag","internal/triegen","internal/ucd","language","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable","width"]
+  revision = "c01e4764d870b77f8abe5096ee19ad20d80e8075"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "555c9d2045607d7c797b9ed9663b0c2916aa91b14b6001e4119e9be49a742484"
+  inputs-digest = "3d6ab4a2e0add98d17152b4fad7a36186d53460b01e73cab8f775b505ce51736"
   solver-name = "gps-cdcl"
   solver-version = 1
