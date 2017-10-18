@@ -70,6 +70,7 @@ func CreateImage(img image.Image, path, format string) image.Image {
 	return img
 }
 
+
 // Load image
 func LocalImage(uri string) (image.Image, string) {
 	file, err := os.Open(uri)

@@ -47,6 +47,7 @@ func ImageName(i *Ires, mode int) string {
 	return i.Expire + "_" + name + "_" + prefix + ext
 }
 
+
 // Generate image path
 func (i *Ires) ImagePath(mode int) string {
 	paths := []rune(i.Dir)
@@ -75,6 +76,7 @@ func (i *Ires) ImagePath(mode int) string {
 	name := ImageName(i, mode)
 	return filepath.Join(oPath, name)
 }
+
 
 // Create prefix by size
 // ex. 640x480
