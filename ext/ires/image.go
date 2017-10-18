@@ -20,8 +20,7 @@ import (
 
 // Input image
 func InputImage(i *Ires) (image.Image, string, bool) {
-	if IsLocalFile(i.Uri) {
-		i.IsLocal = true
+	if i.IsLocal {
 		img, format := LocalImage(i.Uri)
 		return img, format, true
 	} else {

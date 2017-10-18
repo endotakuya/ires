@@ -26,6 +26,8 @@ type Ires struct {
 
 
 func (i *Ires) Resize() string {
+	// Check image type
+	i.IsLocalFile()
 
 	// Delete the expiration date image
 	i.DeleteExpireImage(IMAGE_MODE_RESIZE)
@@ -47,6 +49,8 @@ func (i *Ires) Resize() string {
 }
 
 func (i *Ires) Crop() string {
+	// Check image type
+	i.IsLocalFile()
 
 	// Delete the expiration date image
 	i.DeleteExpireImage(IMAGE_MODE_CROP)
@@ -74,6 +78,8 @@ func (i *Ires) Crop() string {
 }
 
 func (i *Ires) ResizeToCrop() string {
+	// Check image type
+	i.IsLocalFile()
 
 	// Delete the expiration date image
 	i.DeleteExpireImage(IMAGE_MODE_RESIZE_TO_CROP)

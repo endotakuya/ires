@@ -11,11 +11,11 @@ import (
 
 
 // Input image type is Local or HTTP
-func IsLocalFile(path string) bool {
-	if strings.Index(path, "http") == -1 {
-		return true
+func (i *Ires) IsLocalFile()  {
+	if strings.Index(i.Uri, "http") == -1 {
+		i.IsLocal =  true
 	} else {
-		return false
+		i.IsLocal =  false
 	}
 }
 
