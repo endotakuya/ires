@@ -116,7 +116,6 @@ func LocalPath(mode int) string {
 	case 0: dir = "ires/resize"
 	case 1: dir = "ires/crop"
 	case 2: dir = "ires/resize_to_crop"
-	case 3: dir = "ires/original"
 	}
 	return dir
 }

@@ -92,8 +92,13 @@ func LocalImage(uri string) (image.Image, string) {
 // Resizing & Cropping
 func ResizeToCrop(i *Ires, inputImg image.Image) image.Image {
 	var outputImg image.Image
-	path := i.ImagePath(IMAGE_MODE_ORIGINAL)
-	isAsp, conf := IsValidAspectRatio(path, i.Size)
+	var imagePath string
+	if i.IsLocal {
+		imagePath = i.Uri
+	} else {
+		imagePath = i.ImagePath(IMAGE_MODE_ORIGINAL)
+	}
+	isAsp, conf := IsValidAspectRatio(imagePath, i.Size)
 
 	width  := i.Size.Width
 	height := i.Size.Height
