@@ -28,7 +28,7 @@ type Ires struct {
 func (i *Ires) Resize() string {
 
 	// Delete the expiration date image
-	//util.DeleteExpireImage(i.Uri, i.Dir, IMAGE_MODE_CROP, size...)
+	i.DeleteExpireImage(IMAGE_MODE_RESIZE)
 
 	// Delete the expiration date image
 	srcPath := i.imagePath(IMAGE_MODE_RESIZE)
@@ -51,7 +51,7 @@ func (i *Ires) Resize() string {
 func (i *Ires) Crop() string {
 
 	// Delete the expiration date image
-	//util.DeleteExpireImage(i.Uri, i.Dir, IMAGE_MODE_CROP, size...)
+	i.DeleteExpireImage(IMAGE_MODE_CROP)
 
 	srcPath := i.imagePath(IMAGE_MODE_CROP)
 	// When the image exists, return the image path
@@ -78,7 +78,7 @@ func (i *Ires) Crop() string {
 func (i *Ires) ResizeToCrop() string {
 
 	// Delete the expiration date image
-	//util.DeleteExpireImage(i.Uri, i.Dir, IMAGE_MODE_RESIZE_TO_CROP, size...)
+	i.DeleteExpireImage(IMAGE_MODE_RESIZE_TO_CROP)
 
 	srcPath := i.imagePath(IMAGE_MODE_RESIZE_TO_CROP)
 	// When the image exists, return the image path

@@ -74,6 +74,7 @@ func prefixSize(s Size) string {
 	return strconv.Itoa(s.Width) + "x" + strconv.Itoa(s.Height)
 }
 
+
 // リサイズ済みのファイルがあれば、処理せず返す
 func isExistsImage(path string) bool {
 	_, err := os.Stat(path)
@@ -84,18 +85,17 @@ func isExistsImage(path string) bool {
 	}
 }
 
-// Delete image
-//func (i *Ires) DeleteExpireImage(mode int) {
-//
-//	today := time.Now().Format("20060102")
-//	path := i.ImagePath(mode) NewImagePath(uri, dir, today, mode, size...)
-//	_, err := os.Stat(path)
-//	if err == nil {
-//		if err := os.Remove(path); err != nil {
-//			panic(err)
-//		}
-//	}
-//}
+
+// Read directory
+func (i *Ires) ReadImageDir(mode int) string {
+	var dir string
+	if i.IsLocal {
+		dir = localPath(mode)
+	} else {
+		dir = remotePath(i)
+	}
+	return filepath.Join(i.Dir, dir)
+}
 
 
 // if local image, create ires directory

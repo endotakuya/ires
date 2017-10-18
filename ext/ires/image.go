@@ -12,6 +12,9 @@ import (
 
 	"github.com/nfnt/resize"
 	"github.com/oliamb/cutter"
+	"io/ioutil"
+	"path"
+	"time"
 )
 
 
@@ -122,6 +125,37 @@ func resizeToCrop(i *Ires, inputImg image.Image) image.Image {
 
 	}
 	return outputImg
+}
+
+
+// Check expiration date
+func (i *Ires) DeleteExpireImage(mode int) {
+
+	today := time.Now().Format("20060102")
+	dir := i.ReadImageDir(mode)
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, file := range files {
+		findName := file.Name()
+		matched,_ := path.Match(today + "_*", findName)
+		if matched {
+			DeleteImage(path.Join(dir, findName))
+		}
+	}
+}
+
+
+// Delete image
+func DeleteImage(path string) {
+	_, err := os.Stat(path)
+	if err == nil {
+		if err := os.Remove(path); err != nil {
+			panic(err)
+		}
+	}
 }
 
 
