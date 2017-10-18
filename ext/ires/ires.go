@@ -30,15 +30,14 @@ func (i *Ires) Resize() string {
 	// Delete the expiration date image
 	i.DeleteExpireImage(IMAGE_MODE_RESIZE)
 
-	// Delete the expiration date image
 	distPath := i.ImagePath(IMAGE_MODE_RESIZE)
 	// When the image exists, return the image path
 	if IsExistsImage(distPath) {
 		return i.TargetImagePath(distPath)
 	}
 
-	inputImg, format, isExists := InputImage(i)
-	if !isExists {
+	inputImg, format, isImageExist := InputImage(i)
+	if !isImageExist {
 		return i.Uri
 	}
 

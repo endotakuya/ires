@@ -66,7 +66,6 @@ func CreateImage(img image.Image, path, format string) image.Image {
 	default:
 		jpeg.Encode(file, img, nil)
 	}
-
 	return img
 }
 
