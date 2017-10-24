@@ -111,9 +111,9 @@ func ResizeToCrop(i *Ires, inputImg image.Image) image.Image {
 		// Resize
 		mode := ResizeMode(conf, i.Size)
 		switch mode {
-		case 1, 3:
+		case 3, 4:
 			resizeImg = resize.Resize(uint(width), 0, inputImg, resize.Lanczos3)
-		case 2, 4:
+		case 1, 2:
 			resizeImg = resize.Resize(0, uint(height), inputImg, resize.Lanczos3)
 		default:
 			resizeImg = inputImg
