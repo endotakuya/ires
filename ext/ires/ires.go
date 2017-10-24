@@ -27,41 +27,41 @@ type Ires struct {
 
 func (i *Ires) Resize() string {
 	// Check image type
-	i.IsLocalFile()
+	i.isLocalFile()
 
 	// Delete the expiration date image
-	i.DeleteExpireImage(IMAGE_MODE_RESIZE)
+	i.deleteExpireImage(IMAGE_MODE_RESIZE)
 
-	distPath := i.ImagePath(IMAGE_MODE_RESIZE)
+	distPath := i.imagePath(IMAGE_MODE_RESIZE)
 	// When the image exists, return the image path
-	if IsExistsImage(distPath) {
-		return i.TargetImagePath(distPath)
+	if isExistsImage(distPath) {
+		return i.targetImagePath(distPath)
 	}
 
-	inputImg, format, isImageExist := InputImage(i)
+	inputImg, format, isImageExist := inputImage(i)
 	if !isImageExist {
 		return i.Uri
 	}
 
-	outputImg 		:= resize.Resize(uint(i.Width), uint(i.Height), inputImg, resize.Lanczos3)
-	CreateImage(outputImg, distPath, format)
-	return i.TargetImagePath(distPath)
+	outputImg := resize.Resize(uint(i.Width), uint(i.Height), inputImg, resize.Lanczos3)
+	createImage(outputImg, distPath, format)
+	return i.targetImagePath(distPath)
 }
 
 func (i *Ires) Crop() string {
 	// Check image type
-	i.IsLocalFile()
+	i.isLocalFile()
 
 	// Delete the expiration date image
-	i.DeleteExpireImage(IMAGE_MODE_CROP)
+	i.deleteExpireImage(IMAGE_MODE_CROP)
 
-	distPath := i.ImagePath(IMAGE_MODE_CROP)
+	distPath := i.imagePath(IMAGE_MODE_CROP)
 	// When the image exists, return the image path
-	if IsExistsImage(distPath) {
-		return i.TargetImagePath(distPath)
+	if isExistsImage(distPath) {
+		return i.targetImagePath(distPath)
 	}
 
-	inputImg, format, isImageExist := InputImage(i)
+	inputImg, format, isImageExist := inputImage(i)
 	if !isImageExist {
 		return i.Uri
 	}
@@ -72,31 +72,31 @@ func (i *Ires) Crop() string {
 		Mode: cutter.Centered,
 		Options: cutter.Copy,
 	})
-	CreateImage(outputImg, distPath, format)
+	createImage(outputImg, distPath, format)
 
-	return i.TargetImagePath(distPath)
+	return i.targetImagePath(distPath)
 }
 
 func (i *Ires) ResizeToCrop() string {
 	// Check image type
-	i.IsLocalFile()
+	i.isLocalFile()
 
 	// Delete the expiration date image
-	i.DeleteExpireImage(IMAGE_MODE_RESIZE_TO_CROP)
+	i.deleteExpireImage(IMAGE_MODE_RESIZE_TO_CROP)
 
-	distPath := i.ImagePath(IMAGE_MODE_RESIZE_TO_CROP)
+	distPath := i.imagePath(IMAGE_MODE_RESIZE_TO_CROP)
 	// When the image exists, return the image path
-	if IsExistsImage(distPath) {
-		return i.TargetImagePath(distPath)
+	if isExistsImage(distPath) {
+		return i.targetImagePath(distPath)
 	}
 
-	inputImg, format, isImageExist := InputImage(i)
+	inputImg, format, isImageExist := inputImage(i)
 	if !isImageExist {
 		return i.Uri
 	}
 
-	outputImg := ResizeToCrop(i ,inputImg)
-	CreateImage(outputImg, distPath, format)
+	outputImg := resizeToCrop(i ,inputImg)
+	createImage(outputImg, distPath, format)
 
-	return i.TargetImagePath(distPath)
+	return i.targetImagePath(distPath)
 }
