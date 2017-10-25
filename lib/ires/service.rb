@@ -12,7 +12,7 @@ module Ires
       full_path = image_full_path(path.to_s)
 
        # if no image or could not find file path then perform the same action as 'image_tag'
-      return nil if target_resource?(full_path)
+      return nil if invalid_path?(full_path)
 
       expiration_date = expiration_date(expire)
       dir = image_dir

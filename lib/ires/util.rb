@@ -60,7 +60,7 @@ module Ires
 
     # Check file or URI
     # @return [Bool]
-    def target_resource?(path)
+    def invalid_path?(uri)
       !File.exist?(path) && !path.include?("http")
     end
     
