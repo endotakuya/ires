@@ -53,11 +53,7 @@ extern "C" {
 #endif
 
 
-extern char* resizeImage(char* p0, GoInt p1, GoInt p2, char* p3, char* p4);
-
-extern char* cropImage(char* p0, GoInt p1, GoInt p2, char* p3, char* p4);
-
-extern char* resizeToCropImage(char* p0, GoInt p1, GoInt p2, char* p3, char* p4);
+extern char* iresImagePath(char* p0, GoInt p1, GoInt p2, char* p3, char* p4, char* p5);
 
 #ifdef __cplusplus
 }
