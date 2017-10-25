@@ -6,7 +6,7 @@ module Ires
   module ViewHelper
 
     # Image resize
-    # return [image_tag]
+    # @return [image_tag]
     def ires_tag(path:, width:, height:, mode: 'resize', expire: 30.days, **option)
       image = Ires::Service.path(path: path, width: width, height: height, mode: mode, expire: expire)
       return nil if image.nil?

@@ -2,7 +2,7 @@ module Ires
   module Base
     
     # Image path
-    # return [String | nil]
+    # @return [String | nil]
     def ires_image_path(ires_element)
       case ires_element[:mode]
       when 'resize'

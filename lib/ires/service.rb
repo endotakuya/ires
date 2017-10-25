@@ -7,7 +7,7 @@ module Ires
     extend Ires::Base
 
     # Resize image path
-    # return [String]
+    # @return [String]
     def self.path(path:, width:, height:, mode: 'resize', expire: 30.days)
       full_path = image_full_path(path.to_s)
 

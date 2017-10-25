@@ -4,13 +4,13 @@ module Ires
   module Util
 
     # Reszie image directory
-    # return [String]
+    # @return [String]
     def image_dir
       @image_dir ||= Pathname.new(Rails.root).join('public').to_s
     end
 
     # Image full path or HTTP URL
-    # return [String]
+    # @return [String]
     def image_full_path(path)
       root = Rails.root.to_s
       if path.include?(root) || path.include?('http')
@@ -21,7 +21,7 @@ module Ires
     end
 
     # Reszie image directory
-    # return [none(ffi)]
+    # @return [none(ffi)]
     def current_os
       if ['darwin', 'linux'].include?(os)
         os
@@ -32,7 +32,7 @@ module Ires
     end
 
     # Search OS
-    # return [String]
+    # @return [String]
     def os
       @os ||= (
         host_os = RbConfig::CONFIG['host_os']
@@ -53,13 +53,13 @@ module Ires
 
     # Expiration date (default: 7.days)
     # ex. "20170101"
-    # return [String]
+    # @return [String]
     def expiration_date(expire)
       (Date.today + expire).strftime('%Y%m%d')
     end
 
     # Check file or URI
-    # return [Bool]
+    # @return [Bool]
     def target_resource?(path)
       !File.exist?(path) && !path.include?("http")
     end
