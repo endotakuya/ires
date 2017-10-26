@@ -1,4 +1,4 @@
-require 'rbconfig'
+require 'ires/os'
 
 desc "Build shared object"
 namespace :ires do
