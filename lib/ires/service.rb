@@ -1,22 +1,22 @@
 require 'ires/core'
+require 'ires/os'
 
 module Ires
   class Service
-    extend Ires::Core
-
     class << self
+
       # Resize image path
       # @return [String]
-      def self.path(path:, width:, height:, mode: 'resize', expire: 30.days)
+      def path(path:, width:, height:, mode: 'resize', expire: 30.days)
 
-        os = current_os
+        os = Ires::Os.current
         return nil if os.nil?
 
         full_path = image_full_path(path.to_s)
 
         # if no image or could not find file path then perform the same action as 'image_tag'
         return nil if invalid_path?(full_path)
-
+        
         expiration_date = expiration_date(expire)
         dir = image_dir
 
@@ -52,7 +52,7 @@ module Ires
 
       # Check file or URI
       # @return [Bool]
-      def invalid_path?(uri)
+      def invalid_path?(path)
         !File.exist?(path) && !path.include?("http")
       end
 
@@ -66,7 +66,7 @@ module Ires
       # Image path
       # @return [String]
       def ires_image_path(ires_element)
-        Ires::Init.iresImagePath(
+        Ires::Core.iresImagePath(
           ires_element[:path],
           ires_element[:width],
           ires_element[:height],
@@ -75,38 +75,6 @@ module Ires
           ires_element[:expire])
       end
 
-      # Reszie image directory
-      # @return [none(ffi)]
-      def current_os
-        if ['darwin', 'linux'].include?(os)
-          os
-        else
-          logger.fatal "Ires is not supported by this #{os}"
-          nil
-        end
-      end
-
-      # Search OS
-      # @return [String]
-      def os
-        @os ||= (
-        host_os = RbConfig::CONFIG['host_os']
-        case host_os
-          when /mswin|msys|mingw|cygwin|bccwin|wince|emc/
-            'windows'
-          when /darwin|mac os/
-            'darwin'
-          when /linux/
-            'linux'
-          when /solaris|bsd/
-            'unix'
-          else
-            'unknown'
-        end
-        )
-      end
     end
-
-
   end
 end
