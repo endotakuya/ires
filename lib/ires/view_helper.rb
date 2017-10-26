@@ -1,4 +1,4 @@
-require 'ires/init'
+require 'ires/core'
 require 'ires/service'
 require 'action_view/helpers'
 
