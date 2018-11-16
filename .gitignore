@@ -11,6 +11,7 @@ test/dummy/log/*
 !test/dummy/log/.keep
 test/dummy/public/ires/*
 !test/dummy/public/ires/.keep
+test/dummy/db/*
 
 # go resouce
 ext/vendor/
