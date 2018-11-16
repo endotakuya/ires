@@ -1,14 +1,14 @@
 require 'ires/core'
 require 'ires/os'
+require 'ires/mode'
+require 'ires/type'
 
 module Ires
   class Service
     class << self
-
       # Resize image path
       # @return [String]
-      def path(path:, width:, height:, mode: 'resize', expire: 30.days)
-
+      def path(path:, width:, height:, type: Type::ALL, mode: Mode::RESIZE, expire: 30.days)
         os = Ires::Os.current
         return nil if os.nil?
 
@@ -16,7 +16,7 @@ module Ires
 
         # if no image or could not find file path then perform the same action as 'image_tag'
         return nil if invalid_path?(full_path)
-        
+
         expiration_date = expiration_date(expire)
         dir = image_dir
 
@@ -25,6 +25,7 @@ module Ires
           width:  width,
           height: height,
           mode:   mode,
+          type:   type,
           dir:    dir,
           expire: expiration_date
         }
@@ -53,28 +54,29 @@ module Ires
       # Check file or URI
       # @return [Bool]
       def invalid_path?(path)
-        !File.exist?(path) && !path.include?("http")
+        !File.exist?(path) && !path.include?('http')
       end
 
       # Expiration date (default: 7.days)
       # ex. "20170101"
       # @return [String]
       def expiration_date(expire)
-        (Date.today + expire).strftime('%Y%m%d')
+        (Time.zone.today + expire).strftime('%Y%m%d')
       end
 
       # Image path
       # @return [String]
       def ires_image_path(ires_element)
-        Ires::Core.iresImagePath(
+        Core.iresImagePath(
           ires_element[:path],
           ires_element[:width],
           ires_element[:height],
+          ires_element[:type],
           ires_element[:mode],
           ires_element[:dir],
-          ires_element[:expire])
+          ires_element[:expire]
+        )
       end
-
     end
   end
 end

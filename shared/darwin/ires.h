@@ -53,7 +53,7 @@ extern "C" {
 #endif
 
 
-extern char* iresImagePath(char* p0, GoInt p1, GoInt p2, char* p3, char* p4, char* p5);
+extern char* iresImagePath(char* p0, GoInt p1, GoInt p2, GoInt p3, GoInt p4, char* p5, char* p6);
 
 #ifdef __cplusplus
 }
