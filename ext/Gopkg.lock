@@ -2,50 +2,84 @@
 
 
 [[projects]]
+  digest = "1:8e47871087b94913898333f37af26732faaab30cdb41571136cf7aec9921dae7"
   name = "github.com/PuerkitoBio/purell"
   packages = ["."]
+  pruneopts = ""
   revision = "0bcb03f4b4d0a9428594752bd2a3b9aa0a9d4bd4"
   version = "v1.1.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:331a419049c2be691e5ba1d24342fc77c7e767a80c666a18fd8a9f7b82419c1c"
   name = "github.com/PuerkitoBio/urlesc"
   packages = ["."]
+  pruneopts = ""
   revision = "de5bf2ad457846296e2031421a34e2568e304e35"
 
 [[projects]]
   branch = "master"
+  digest = "1:690e87555de96973ac79aae9fe51fef5e470f7e3cde3b1aa731ae01ec3f9ffe8"
   name = "github.com/goware/urlx"
   packages = ["."]
+  pruneopts = ""
   revision = "e22571dfbd216d3ca34207d9a1d877f38d8f051c"
 
 [[projects]]
   branch = "master"
+  digest = "1:74688aecdaaede7d4ea1ead4569dc5f9f8b169b3b9698470f8d107f347a7a2cd"
   name = "github.com/nfnt/resize"
   packages = ["."]
+  pruneopts = ""
   revision = "891127d8d1b52734debe1b3c3d7e747502b6c366"
 
 [[projects]]
+  digest = "1:8e8c82e661fc70a3dab1d1bb0f92b800ea32112f5926c08da9c13a46a57cc557"
   name = "github.com/oliamb/cutter"
   packages = ["."]
+  pruneopts = ""
   revision = "5cd9c24de6524b7251ac6b8600b0ba8f43a85963"
   version = "v0.2.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:1418c6b5c10b5e07fb4c90a24227f6493e19ad4d31177d66458115fc47669fb5"
   name = "golang.org/x/net"
   packages = ["idna"]
+  pruneopts = ""
   revision = "1087133bc4af3073e18add999345c6ae75918503"
 
 [[projects]]
   branch = "master"
+  digest = "1:706747bb1e3f870cf0dc52459cb94324cd347142fff3b61db56c0157a5f598d0"
   name = "golang.org/x/text"
-  packages = ["collate","collate/build","internal/colltab","internal/gen","internal/tag","internal/triegen","internal/ucd","language","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable","width"]
+  packages = [
+    "collate",
+    "collate/build",
+    "internal/colltab",
+    "internal/gen",
+    "internal/tag",
+    "internal/triegen",
+    "internal/ucd",
+    "language",
+    "secure/bidirule",
+    "transform",
+    "unicode/bidi",
+    "unicode/cldr",
+    "unicode/norm",
+    "unicode/rangetable",
+    "width",
+  ]
+  pruneopts = ""
   revision = "c01e4764d870b77f8abe5096ee19ad20d80e8075"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "3d6ab4a2e0add98d17152b4fad7a36186d53460b01e73cab8f775b505ce51736"
+  input-imports = [
+    "github.com/goware/urlx",
+    "github.com/nfnt/resize",
+    "github.com/oliamb/cutter",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
