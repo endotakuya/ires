@@ -1,57 +1,99 @@
 package ires
 
 import (
-	"bytes"
-	"image"
-	"image/gif"
-	"image/jpeg"
-	"image/png"
-	"io"
-	"io/ioutil"
-	"net/http"
-	"os"
-	"path"
-	"time"
+  "bytes"
+  "image"
+  "image/gif"
+  "image/jpeg"
+  "image/png"
+  "io"
+  "io/ioutil"
+  "net/http"
+  "os"
+  "path"
+  "strings"
+  "time"
 
-	"github.com/nfnt/resize"
-	"github.com/oliamb/cutter"
+  "github.com/nfnt/resize"
+  "github.com/oliamb/cutter"
 )
 
+// Check expiration date
+func (i *Ires) DeleteExpireImage() {
+  today := time.Now().Format("20060102")
+  dir := i.readImageDir()
+  files, err := ioutil.ReadDir(dir)
+  if err != nil {
+    return
+  }
+
+  for _, file := range files {
+    findName := file.Name()
+    matched, _ := path.Match(today+"_*", findName)
+    if matched {
+      deleteImage(path.Join(dir, findName))
+    }
+  }
+}
+
+// Input image type is Local or HTTP
+func (i *Ires) CheckLocal() {
+  if strings.Index(i.URI, "http") == -1 {
+    i.IsLocal = true
+  } else {
+    i.IsLocal = false
+  }
+}
 
 // Input image
-func inputImage(i *Ires) (image.Image, string, bool) {
+func (i *Ires) inputImage() bool {
 	if i.IsLocal {
-		img, format := localImage(i.Uri)
-		return img, format, true
-	} else {
-		return downloadImage(i)
+		img, format := localImage(i.URI)
+		i.InputImage = &InputImage{
+		  Image: img,
+		  Format: format,
+		  URI: i.URI,
+    }
+    i.setConfig()
+		return true
 	}
+	return i.downloadImage()
 }
-
 
 // Save http image
-func downloadImage(i *Ires) (image.Image, string, bool) {
-	res, err := http.Get(i.Uri)
-	if err != nil {
-		panic(err)
-	}
-	defer res.Body.Close()
+func (i *Ires) downloadImage() bool {
+	res, err := http.Get(i.URI)
+  if err != nil {
+    return false
+  }
+  defer res.Body.Close()
 
-	header, r := copyReader(res.Body)
-	format := formatSearch(r)
+  header, r := copyReader(res.Body)
+  format := formatSearch(r)
 
-	img, _, err := image.Decode(io.MultiReader(header, res.Body))
-	if err != nil {
-		return nil, "", false
-	}
-	return createImage(img, i.imagePath(IMAGE_MODE_ORIGINAL), format), format, true
+  img, _, err := image.Decode(io.MultiReader(header, res.Body))
+  if err != nil {
+    return false
+  }
+
+  distURI := i.imageURI(true)
+  i.InputImage = &InputImage{
+    Image: img,
+    Format: format,
+    URI: distURI,
+  }
+
+  if createImage(img, distURI, format) {
+    i.setConfig()
+    return true
+  }
+	return false
 }
 
-
-func createImage(img image.Image, path, format string) image.Image {
+func createImage(img image.Image, path, format string) bool {
 	file, err := os.Create(path)
 	if err != nil {
-		panic(err)
+		return false
 	}
 	defer file.Close()
 
@@ -65,15 +107,14 @@ func createImage(img image.Image, path, format string) image.Image {
 	default:
 		jpeg.Encode(file, img, nil)
 	}
-	return img
+	return true
 }
-
 
 // Load image
 func localImage(uri string) (image.Image, string) {
 	file, err := os.Open(uri)
-	if err != nil{
-		panic(err)
+	if err != nil {
+    return nil, ""
 	}
 	defer file.Close()
 
@@ -83,24 +124,33 @@ func localImage(uri string) (image.Image, string) {
 
 	img, _, err := image.Decode(io.MultiReader(header, file))
 	if err != nil {
-		panic(err)
+    return nil, ""
 	}
 	return img, format
 }
 
+// Set image config
+func (i *Ires) setConfig() {
+  file, err := os.Open(i.InputImage.URI)
+  if err != nil {
+    panic(err)
+  }
+  defer file.Close()
+
+  conf, _, err := image.DecodeConfig(file)
+  if err != nil {
+    panic(err)
+  }
+  i.InputImage.Config = conf
+}
 
 // Resizing & Cropping
-func resizeToCrop(i *Ires, inputImg image.Image) image.Image {
+func (i *Ires) resizeToCrop() image.Image {
+  inputImg := i.InputImage.Image
 	var outputImg image.Image
-	var imagePath string
-	if i.IsLocal {
-		imagePath = i.Uri
-	} else {
-		imagePath = i.imagePath(IMAGE_MODE_ORIGINAL)
-	}
-	isAsp, conf := isValidAspectRatio(imagePath, i.Size)
+	isAsp, conf := i.isValidAspectRatio()
 
-	width  := i.Size.Width
+	width := i.Size.Width
 	height := i.Size.Height
 
 	if isAsp {
@@ -121,35 +171,14 @@ func resizeToCrop(i *Ires, inputImg image.Image) image.Image {
 
 		// Cropping
 		outputImg, _ = cutter.Crop(resizeImg, cutter.Config{
-			Width:  width,
-			Height: height,
-			Mode: cutter.Centered,
+			Width:   width,
+			Height:  height,
+			Mode:    cutter.Centered,
 			Options: cutter.Copy,
 		})
-
 	}
 	return outputImg
 }
-
-
-// Check expiration date
-func (i *Ires) deleteExpireImage(mode int) {
-	today := time.Now().Format("20060102")
-	dir := i.readImageDir(mode)
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		return
-	}
-
-	for _, file := range files {
-		findName := file.Name()
-		matched,_ := path.Match(today + "_*", findName)
-		if matched {
-			deleteImage(path.Join(dir, findName))
-		}
-	}
-}
-
 
 // Delete image
 func deleteImage(path string) {
@@ -161,38 +190,20 @@ func deleteImage(path string) {
 	}
 }
 
-
 // Verify aspect ratio
-func isValidAspectRatio(path string, s Size) (bool, image.Config) {
-	conf := imageConfig(path)
+func (i *Ires) isValidAspectRatio() (bool, image.Config) {
+	conf := i.InputImage.Config
+	s := i.Size
 	aspH := (conf.Height * s.Width) / conf.Width
 	if aspH == s.Height {
 		return true, conf
-	} else {
-		return false, conf
 	}
+	return false, conf
 }
-
-
-// Image config
-func imageConfig(path string) image.Config {
-	file, err := os.Open(path)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	conf, _, err := image.DecodeConfig(file)
-	if err != nil {
-		panic(err)
-	}
-	return conf
-}
-
 
 // Select image resize mode
 func resizeMode(conf image.Config, s Size) int {
-	srcWidth  := s.Width
+	srcWidth := s.Width
 	srcHeight := s.Height
 
 	if conf.Width >= conf.Height && srcWidth >= srcHeight {
@@ -207,10 +218,9 @@ func resizeMode(conf image.Config, s Size) int {
 	return 0
 }
 
-
 // Search image format
 // if defined, return "jpeg"
-func formatSearch(r io.Reader) string{
+func formatSearch(r io.Reader) string {
 	_, format, err := image.DecodeConfig(r)
 	if err != nil {
 		return "jpeg"
@@ -218,10 +228,30 @@ func formatSearch(r io.Reader) string{
 	return format
 }
 
-
 // Copy Reader
 func copyReader(body io.Reader) (io.Reader, io.Reader) {
 	header := bytes.NewBuffer(nil)
 	r := io.TeeReader(body, header)
 	return header, r
+}
+
+// Valid resize type
+func (i *Ires) validResizeType() bool {
+  config := i.InputImage.Config
+  valid := false
+  switch i.ResizeType {
+  case All:
+    valid = true
+  case Smaller:
+    if config.Width < i.Width && config.Height < i.Height {
+      valid = true
+    }
+  case Larger:
+    if i.Width <= config.Width && i.Height <= config.Height {
+      valid = true
+    }
+  default:
+    valid = true
+  }
+  return valid
 }

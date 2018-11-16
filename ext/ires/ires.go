@@ -1,102 +1,123 @@
 package ires
 
 import (
-	"github.com/nfnt/resize"
-	"github.com/oliamb/cutter"
+  "image"
+
+  "github.com/nfnt/resize"
+  "github.com/oliamb/cutter"
 )
 
+type Mode int
 const (
-	IMAGE_MODE_RESIZE int = iota
-	IMAGE_MODE_CROP
-	IMAGE_MODE_RESIZE_TO_CROP
-	IMAGE_MODE_ORIGINAL
+  Resize Mode = iota
+  Crop
+  ResizeToCrop
 )
 
-type Size struct {
-	Width, Height int
-}
+type ResizeType int
+const (
+  All ResizeType = iota
+  Smaller
+  Larger
+)
 
-type Ires struct {
-	Uri 		string
-	Size
-	Dir 		string
-	Expire 		string
-	IsLocal 	bool
-}
+type (
+  // Size is ...
+  Size struct {
+    Width, Height int
+  }
 
+  // InputImage is ...
+  InputImage struct {
+    Image  image.Image
+    Config image.Config
+    Format string
+    URI    string
+  }
 
+  // Ires is ...
+  Ires struct {
+    Size
+    ResizeType
+    Mode
+    *InputImage
+    URI     string
+    Dir     string
+    Expire  string
+    IsLocal bool
+  }
+)
+
+// Resize is ...
 func (i *Ires) Resize() string {
-	// Check image type
-	i.isLocalFile()
-
-	// Delete the expiration date image
-	i.deleteExpireImage(IMAGE_MODE_RESIZE)
-
-	distPath := i.imagePath(IMAGE_MODE_RESIZE)
+  i.Mode = Resize
+	distURI := i.imageURI(false)
 	// When the image exists, return the image path
-	if isExistsImage(distPath) {
-		return i.targetImagePath(distPath)
+	if isExistsImage(distURI) {
+		return i.targetImageURI(distURI)
 	}
 
-	inputImg, format, isImageExist := inputImage(i)
-	if !isImageExist {
-		return i.Uri
+	if !i.inputImage() {
+		return i.URI
 	}
 
-	outputImg := resize.Resize(uint(i.Width), uint(i.Height), inputImg, resize.Lanczos3)
-	createImage(outputImg, distPath, format)
-	return i.targetImagePath(distPath)
+	var outputImg image.Image
+	if i.validResizeType() {
+   outputImg = resize.Resize(uint(i.Width), uint(i.Height), i.InputImage.Image, resize.Lanczos3)
+  } else {
+   outputImg = i.InputImage.Image
+  }
+	createImage(outputImg, distURI, i.InputImage.Format)
+	return i.targetImageURI(distURI)
 }
 
+// Crop is Crop ...
 func (i *Ires) Crop() string {
-	// Check image type
-	i.isLocalFile()
-
-	// Delete the expiration date image
-	i.deleteExpireImage(IMAGE_MODE_CROP)
-
-	distPath := i.imagePath(IMAGE_MODE_CROP)
+  i.Mode = Crop
+  distURI := i.imageURI(false)
 	// When the image exists, return the image path
-	if isExistsImage(distPath) {
-		return i.targetImagePath(distPath)
+	if isExistsImage(distURI) {
+    return i.targetImageURI(distURI)
+  }
+
+	if !i.inputImage() {
+		return i.URI
 	}
 
-	inputImg, format, isImageExist := inputImage(i)
-	if !isImageExist {
-		return i.Uri
-	}
-
-	outputImg, _ := cutter.Crop(inputImg, cutter.Config{
-		Width:  i.Width,
-		Height: i.Height,
-		Mode: cutter.Centered,
-		Options: cutter.Copy,
-	})
-	createImage(outputImg, distPath, format)
-
-	return i.targetImagePath(distPath)
+  var outputImg image.Image
+  if i.validResizeType() {
+    outputImg, _ = cutter.Crop(i.InputImage.Image, cutter.Config{
+      Width:   i.Width,
+      Height:  i.Height,
+      Mode:    cutter.Centered,
+      Options: cutter.Copy,
+    })
+  } else {
+    outputImg = i.InputImage.Image
+  }
+  createImage(outputImg, distURI, i.InputImage.Format)
+  return i.targetImageURI(distURI)
 }
 
+// ResizeToCrop is ...
 func (i *Ires) ResizeToCrop() string {
-	// Check image type
-	i.isLocalFile()
-
-	// Delete the expiration date image
-	i.deleteExpireImage(IMAGE_MODE_RESIZE_TO_CROP)
-
-	distPath := i.imagePath(IMAGE_MODE_RESIZE_TO_CROP)
+  i.Mode = ResizeToCrop
+  distURI := i.imageURI(false)
 	// When the image exists, return the image path
-	if isExistsImage(distPath) {
-		return i.targetImagePath(distPath)
+	if isExistsImage(distURI) {
+		return i.targetImageURI(distURI)
 	}
 
-	inputImg, format, isImageExist := inputImage(i)
-	if !isImageExist {
-		return i.Uri
+	if !i.inputImage() {
+		return i.URI
 	}
 
-	outputImg := resizeToCrop(i ,inputImg)
-	createImage(outputImg, distPath, format)
-
-	return i.targetImagePath(distPath)
+  var outputImg image.Image
+  if i.validResizeType() {
+    outputImg = i.resizeToCrop()
+  } else {
+    outputImg = i.InputImage.Image
+  }
+  createImage(outputImg, distURI, i.InputImage.Format)
+  return i.targetImageURI(distURI)
 }

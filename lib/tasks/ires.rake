@@ -1,6 +1,6 @@
 require 'ires/os'
 
-desc "Build shared object"
+desc 'Build shared object'
 namespace :ires do
   task :build do
     os = Ires::Os.current
