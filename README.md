@@ -14,31 +14,40 @@
 <%= ires_tag( path: "image_01.jpg", width: 90, height: 120 ) %>
 
 <!-- Using image_tag options -->
-<%= ires_tag( path: "http://example.com/image_02.jpg", width: 200, height: 200, mode: "crop", alt: "example image" ) %>
+<%= ires_tag( path: "http://example.com/image_02.jpg", width: 200, height: 200, Ires::Mode::CROP, alt: "example image" ) %>
 ```
 
 ### Get resize path
 
 ```ruby
-Ires::Service.path( path: "<FULL IMAGE PATH>", width: 400, height: 300)
+Ires::Service.path(path: '<FULL IMAGE PATH>', width: 400, height: 300)
 => /ires/<resize image path>
 ```
 
 ### Select mode
 
-| info                       |     　　　mode 　　　  |
-|:---------------------------|:--------------------:|
-| Resize                     | resize (default)     |
-| Cropping                   | crop                 |
-| Rsize after Cropping       | rsize_to_crop        | 
+| info                       |     　　        mode       　　　  |
+|:---------------------------|:---------------------------------|
+| Resize                     | Ires::Mode::RESIZE (default)     |
+| Cropping                   | Ires::Mode::CROP                 |
+| Rsize after Cropping       | Ires::Mode::RESIZE_TO_CROP       |
 
+### Select type
+
+Filter of resize image.
+
+| info                       |     　　       type        　　　  |
+|:---------------------------|:---------------------------------|
+| All                        | Ires::Type::ALL (default)        |
+| Smaller than               | Ires::Type::SMALLER              |
+| Larger than                | Ires::Type::LARGER               |
 
 ### Specify cache expiration
 
 Default: **30days**
 
 ```erb
-<%= ires_tag( path: "/image.jpg", width: 400, height: 300, expire: 7.days ) %>
+<%= ires_tag( path: '/image.jpg', width: 400, height: 300, expire: 7.days ) %>
 ```
 
 ### Saved directory
@@ -117,7 +126,7 @@ $ dep ensure
 # Output to a shared object.
 $ CGO_ENABLED=1 GOOS=linux go build -v -buildmode=c-shared -o shared/linux/ires.so ext/main.go
 ```
-※ In the current Docker, you can build only linux environment.  
+※ In the current Docker, you can build only linux environment.
 ※ If you want to build in other environments, add GCC or install Go on the host side.🙇
 
 ### 2. Start rails server
