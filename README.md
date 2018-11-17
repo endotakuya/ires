@@ -11,10 +11,10 @@
 
 ```erb
 <!-- Usually -->
-<%= ires_tag( path: "image_01.jpg", width: 90, height: 120 ) %>
+<%= ires_tag(path: "image_01.jpg", width: 90, height: 120) %>
 
 <!-- Using image_tag options -->
-<%= ires_tag( path: "http://example.com/image_02.jpg", width: 200, height: 200, Ires::Mode::CROP, alt: "example image" ) %>
+<%= ires_tag(path: "http://example.com/image_02.jpg", width: 200, height: 200, Ires::Mode::CROP, alt: "example image") %>
 ```
 
 ### Get resize path
@@ -47,7 +47,7 @@ Filter of resize image.
 Default: **30days**
 
 ```erb
-<%= ires_tag( path: '/image.jpg', width: 400, height: 300, expire: 7.days ) %>
+<%= ires_tag(path: '/image.jpg', width: 400, height: 300, expire: 7.days) %>
 ```
 
 ### Saved directory
