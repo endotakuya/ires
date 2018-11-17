@@ -40,36 +40,36 @@ func (i *Ires) imageURI(original bool) string {
 
 // Generate image name
 func (i *Ires) imageName(original bool) string {
-  splitPath := strings.Split(i.URI, "/")
+	splitPath := strings.Split(i.URI, "/")
 
-  // ex. sample.jpg
-  fileName := splitPath[len(splitPath)-1]
-  // ex. .jpg
-  ext := filepath.Ext(fileName)
+	// ex. sample.jpg
+	fileName := splitPath[len(splitPath)-1]
+	// ex. .jpg
+	ext := filepath.Ext(fileName)
 
-  name := strings.Replace(fileName, ext, "", 1)
+	name := strings.Replace(fileName, ext, "", 1)
 
-  extInfo := strings.Split(ext, "?")
-  if len(extInfo) > 1 {
-    ext = extInfo[0]
-    name += "_" + strings.Join(extInfo[1:], "")
-  }
+	extInfo := strings.Split(ext, "?")
+	if len(extInfo) > 1 {
+		ext = extInfo[0]
+		name += "_" + strings.Join(extInfo[1:], "")
+	}
 
-  var prefix string
-  if original {
-    prefix = "original"
-  } else {
-    switch i.Mode {
-    case Resize:
-      prefix = prefixSize(i.Size) + "_resize"
-    case Crop:
-      prefix = prefixSize(i.Size) + "_crop"
-    case ResizeToCrop:
-      prefix = prefixSize(i.Size) + "_resize_to_crop"
-    }
-  }
+	var prefix string
+	if original {
+		prefix = "original"
+	} else {
+		switch i.Mode {
+		case Resize:
+			prefix = prefixSize(i.Size) + "_resize"
+		case Crop:
+			prefix = prefixSize(i.Size) + "_crop"
+		case ResizeToCrop:
+			prefix = prefixSize(i.Size) + "_resize_to_crop"
+		}
+	}
 
-  return i.Expire + "_" + name + "_" + prefix + ext
+	return i.Expire + "_" + name + "_" + prefix + ext
 }
 
 // Create prefix by size
