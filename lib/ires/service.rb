@@ -8,7 +8,8 @@ module Ires
     class << self
       # Resize image path
       # @return [String]
-      def path(path:, width:, height:, type: Type::ALL, mode: Mode::RESIZE, expire: 30.days)
+      def path(path:, width: nil, height: nil, type: Type::ALL, mode: Mode::RESIZE, expire: 30.days)
+        raise ArgumentError, "Either width or height is required" if width.nil? && height.nil?
         os = Ires::Os.current
         return nil if os.nil?
 
@@ -22,8 +23,8 @@ module Ires
 
         ires_element = {
           path:   full_path,
-          width:  width,
-          height: height,
+          width:  width || 0,
+          height: height || 0,
           mode:   mode,
           type:   type,
           dir:    dir,

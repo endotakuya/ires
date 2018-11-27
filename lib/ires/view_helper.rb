@@ -8,11 +8,13 @@ module Ires
   module ViewHelper
     # Image resize
     # @return [image_tag]
-    def ires_tag(path:, width:, height:, type: Type::ALL, mode: Mode::RESIZE, expire: 30.days, **option)
+    def ires_tag(path:, width: nil, height: nil, type: Type::ALL, mode: Mode::RESIZE, expire: 30.days, **option)
+      raise ArgumentError, "Either width or height is required" if width.nil? && height.nil?
+
       image = Ires::Service.path(
         path: path,
-        width: width,
-        height: height,
+        width: width || 0,
+        height: height || 0,
         mode: mode,
         type: type,
         expire: expire
