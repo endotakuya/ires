@@ -68,10 +68,11 @@ func (i *Ires) downloadImage() bool {
 	}
 	defer res.Body.Close()
 
-	header, r := copyReader(res.Body)
-	format := formatSearch(r)
+	buf := new(bytes.Buffer)
+	io.Copy(buf, res.Body)
+	format := formatSearch(res.Body)
 
-	img, _, err := image.Decode(io.MultiReader(header, res.Body))
+	img, _, err := image.Decode(buf)
 	if err != nil {
 		return false
 	}
@@ -118,11 +119,11 @@ func localImage(uri string) (image.Image, string) {
 	}
 	defer file.Close()
 
-	// Decode jpeg into image.Image
-	header, r := copyReader(file)
-	format := formatSearch(r)
+	buf := new(bytes.Buffer)
+	io.Copy(buf, file)
+	format := formatSearch(file)
 
-	img, _, err := image.Decode(io.MultiReader(header, file))
+	img, _, err := image.Decode(buf)
 	if err != nil {
 		return nil, ""
 	}
@@ -137,7 +138,10 @@ func (i *Ires) setConfig() {
 	}
 	defer file.Close()
 
-	conf, _, err := image.DecodeConfig(file)
+	buf := new(bytes.Buffer)
+	io.Copy(buf, file)
+
+	conf, _, err := image.DecodeConfig(buf)
 	if err != nil {
 		panic(err)
 	}
@@ -226,13 +230,6 @@ func formatSearch(r io.Reader) string {
 		return "jpeg"
 	}
 	return format
-}
-
-// Copy Reader
-func copyReader(body io.Reader) (io.Reader, io.Reader) {
-	header := bytes.NewBuffer(nil)
-	r := io.TeeReader(body, header)
-	return header, r
 }
 
 // Valid resize type
