@@ -10,7 +10,7 @@ import (
 )
 
 // Generate image path
-func (i *Ires) imageURI(original bool) string {
+func (i *Ires) imageURI(original bool) (string, error) {
 	paths := []rune(i.Dir)
 	pathsLastIndex := len(paths) - 1
 	lastChar := string(paths[pathsLastIndex])
@@ -23,19 +23,23 @@ func (i *Ires) imageURI(original bool) string {
 	if i.IsLocal {
 		oDir = localPath(i.Mode)
 	} else {
-		oDir = remotePath(i.URI)
+		if d, err := remotePath(i.URI); err != nil {
+			return "", nil
+		} else {
+			oDir = d
+		}
 	}
 
 	// Create directory
 	oPath := filepath.Join(dir, oDir)
 	if _, err := os.Stat(oPath); err != nil {
 		if err := os.MkdirAll(oPath, 0777); err != nil {
-			panic(err)
+			return "", err
 		}
 	}
 
 	name := i.imageName(original)
-	return filepath.Join(oPath, name)
+	return filepath.Join(oPath, name), nil
 }
 
 // Generate image name
@@ -88,14 +92,18 @@ func isExistsImage(path string) bool {
 }
 
 // Read directory
-func (i *Ires) readImageDir() string {
+func (i *Ires) readImageDir() (string, error) {
 	var dir string
 	if i.IsLocal {
 		dir = localPath(i.Mode)
 	} else {
-		dir = remotePath(i.URI)
+		if d, err := remotePath(i.URI); err != nil {
+			return "", err
+		} else {
+			dir = d
+		}
 	}
-	return filepath.Join(i.Dir, dir)
+	return filepath.Join(i.Dir, dir), nil
 }
 
 // if local image, create ires directory
@@ -112,19 +120,19 @@ func localPath(mode Mode) string {
 	return dir
 }
 
-// if http image, parse URL & make directory
-func remotePath(uri string) string {
+// if http image, parse URI & make directory
+func remotePath(uri string) (string, error) {
 	u, err := urlx.Parse(uri)
-	dir := []string{"ires"}
 	if err != nil {
-		panic(err)
+		return "", err
 	}
+	dir := []string{"ires"}
 
 	dir = append(dir, u.Host)
 	path := strings.Split(u.Path, "/")
 	dir = append(dir, path[1:len(path)-1]...)
 
-	return strings.Join(dir, "/")
+	return strings.Join(dir, "/"), nil
 }
 
 // Optimize image path

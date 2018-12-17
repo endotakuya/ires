@@ -2,6 +2,7 @@ package main
 
 import (
 	"C"
+	"log"
 
 	"github.com/endotakuya/ires/ext/ires"
 )
@@ -32,13 +33,19 @@ func iresImagePath(URI *C.char, width, height, rType, mode int, Dir, Expire *C.c
 	r.DeleteExpireImage()
 
 	var distURI string
+	var err error
 	switch ires.Mode(mode) {
 	case ires.Resize:
-		distURI = r.Resize()
+		distURI, err = r.Resize()
 	case ires.Crop:
-		distURI = r.Crop()
+		distURI, err = r.Crop()
 	case ires.ResizeToCrop:
-		distURI = r.ResizeToCrop()
+		distURI, err = r.ResizeToCrop()
+	}
+
+	if err != nil {
+		log.Print(err)
+		return C.CString(r.URI)
 	}
 	return C.CString(distURI)
 }
