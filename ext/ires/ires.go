@@ -51,16 +51,19 @@ type (
 )
 
 // Resize is ...
-func (i *Ires) Resize() string {
+func (i *Ires) Resize() (string, error) {
 	i.Mode = Resize
-	distURI := i.imageURI(false)
+	distURI, err := i.imageURI(false)
+	if err != nil {
+		return "", err
+	}
 	// When the image exists, return the image path
 	if isExistsImage(distURI) {
-		return i.targetImageURI(distURI)
+		return i.targetImageURI(distURI), nil
 	}
 
-	if !i.inputImage() {
-		return i.URI
+	if err := i.inputImage(); err != nil {
+		return "", err
 	}
 
 	var outputImg image.Image
@@ -70,20 +73,23 @@ func (i *Ires) Resize() string {
 		outputImg = i.InputImage.Image
 	}
 	createImage(outputImg, distURI, i.InputImage.Format)
-	return i.targetImageURI(distURI)
+	return i.targetImageURI(distURI), nil
 }
 
 // Crop is Crop ...
-func (i *Ires) Crop() string {
+func (i *Ires) Crop() (string, error) {
 	i.Mode = Crop
-	distURI := i.imageURI(false)
+	distURI, err := i.imageURI(false)
+	if err != nil {
+		return "", err
+	}
 	// When the image exists, return the image path
 	if isExistsImage(distURI) {
-		return i.targetImageURI(distURI)
+		return i.targetImageURI(distURI), nil
 	}
 
-	if !i.inputImage() {
-		return i.URI
+	if err := i.inputImage(); err != nil {
+		return "", err
 	}
 
 	var outputImg image.Image
@@ -98,28 +104,35 @@ func (i *Ires) Crop() string {
 		outputImg = i.InputImage.Image
 	}
 	createImage(outputImg, distURI, i.InputImage.Format)
-	return i.targetImageURI(distURI)
+	return i.targetImageURI(distURI), nil
 }
 
 // ResizeToCrop is ...
-func (i *Ires) ResizeToCrop() string {
+func (i *Ires) ResizeToCrop() (string, error) {
 	i.Mode = ResizeToCrop
-	distURI := i.imageURI(false)
+	distURI, err := i.imageURI(false)
+	if err != nil {
+		return "", err
+	}
 	// When the image exists, return the image path
 	if isExistsImage(distURI) {
-		return i.targetImageURI(distURI)
+		return i.targetImageURI(distURI), nil
 	}
 
-	if !i.inputImage() {
-		return i.URI
+	if err := i.inputImage(); err != nil {
+		return "", err
 	}
 
 	var outputImg image.Image
 	if i.validResizeType() {
-		outputImg = i.resizeToCrop()
+		if img, err := i.resizeToCrop(); err != nil {
+			return "", err
+		} else {
+			outputImg = img
+		}
 	} else {
 		outputImg = i.InputImage.Image
 	}
 	createImage(outputImg, distURI, i.InputImage.Format)
-	return i.targetImageURI(distURI)
+	return i.targetImageURI(distURI), nil
 }
