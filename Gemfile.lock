@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ires (1.0.0)
+    ires (1.1.0)
       activesupport (>= 4.1.8)
       ffi
 
