@@ -9,9 +9,12 @@ module Ires
       # Resize image path
       # @return [String]
       def path(path:, width: nil, height: nil, type: Type::ALL, mode: Mode::RESIZE, expire: 30.days)
-        raise ArgumentError, "Either width or height is required" if width.nil? && height.nil?
+        raise ArgumentError, "Either width or height is required." if width.nil? && height.nil?
         os = Ires::Os.current
         return nil if os.nil?
+
+        raise StandardError, "Nil location provided. Can't build URI." if path.nil?
+        return path if path.empty?
 
         full_path = image_full_path(path.to_s)
 
