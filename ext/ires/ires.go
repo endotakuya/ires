@@ -50,6 +50,25 @@ type (
 	}
 )
 
+// Init is ...
+func Init(size Size, rType int, uri, dir, expire string) (i *Ires) {
+	i = &Ires{
+		Size: 		size,
+		ResizeType: ResizeType(rType),
+		URI:        uri,
+		Dir:        dir,
+		Expire:     expire,
+	}
+
+	// If local image, True
+	i.CheckLocal()
+
+	// Delete the expiration date image
+	i.DeleteExpireImage()
+
+	return
+}
+
 // Resize is ...
 func (i *Ires) Resize() (string, error) {
 	i.Mode = Resize
