@@ -6,15 +6,18 @@ module Ires
     extend FFI::Library
     # NOTE: ires.so is golang object
     ffi_lib File.expand_path("../../shared/#{Ires::Os.current}/ires.so", File.dirname(__FILE__))
+
     # resize func
     # Type:
     #   path:   :string
     #   width:  :int
     #   height: :int
     #   type:   :int
-    #   mode:   :int
     #   dir:    :string
     #   expire: :string
-    attach_function :iresImagePath, %i[string int int int int string string], :string
+    params = %i[string int int int string string]
+    attach_function :resizeImagePath, params, :string
+    attach_function :cropImagePath, params, :string
+    attach_function :resizeToCropImagePath, params, :string
   end
 end

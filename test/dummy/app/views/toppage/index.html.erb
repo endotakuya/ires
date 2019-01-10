@@ -15,9 +15,9 @@ table th, table td { border: 1px solid; }
     </tr>
     <tr>
       <td><%= image_tag('/image.jpg', style: "max-width: 400px") %></td>
-      <td><%= ires_tag(path: '/image.jpg', width: 400, height: 300) %> <!-- default mode: Ires::Mode::RESIZE --></td>
-      <td><%= ires_tag(path: '/image.jpg', width: 400, height: 300, mode: Ires::Mode::CROP) %></td>
-      <td><%= ires_tag(path: '/image.jpg', width: 400, height: 300, mode: Ires::Mode::RESIZE_TO_CROP) %></td>
+      <td><%= ires_tag('/image.jpg', width: 400, height: 300) %> <!-- default mode: Ires::Mode::RESIZE --></td>
+      <td><%= ires_tag('/image.jpg', width: 400, height: 300, mode: Ires::Mode::CROP) %></td>
+      <td><%= ires_tag('/image.jpg', width: 400, height: 300, mode: Ires::Mode::RESIZE_TO_CROP) %></td>
     </tr>
   </tbody>
 </table>

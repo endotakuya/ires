@@ -8,7 +8,8 @@ module Ires
     class << self
       # Resize image path
       # @return [String]
-      def path(path:, width: nil, height: nil, type: Type::ALL, mode: Mode::RESIZE, expire: 30.days)
+      def path(path, width: nil, height: nil, type: Type::ALL, mode: Mode::RESIZE, expire: 30.days)
+        raise StandardError, "#{path} is not string." unless path.kind_of?(String)
         raise ArgumentError, "Either width or height is required." if width.nil? && height.nil?
         os = Ires::Os.current
         return nil if os.nil?
@@ -71,15 +72,18 @@ module Ires
       # Image path
       # @return [String]
       def ires_image_path(ires_element)
-        Core.iresImagePath(
-          ires_element[:path],
-          ires_element[:width],
-          ires_element[:height],
-          ires_element[:type],
-          ires_element[:mode],
-          ires_element[:dir],
-          ires_element[:expire]
-        )
+        mode = ires_element[:mode]
+        ires_element.delete(:mode)
+        case mode
+        when Mode::RESIZE
+          Core.resizeImagePath(*ires_element.values)
+        when Mode::CROP
+          Core.cropImagePath(*ires_element.values)
+        when Mode::RESIZE_TO_CROP
+          Core.resizeToCropImagePath(*ires_element.values)
+        else
+          Core.resizeImagePath(*ires_element.values)
+        end
       end
     end
   end

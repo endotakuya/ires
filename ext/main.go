@@ -10,42 +10,49 @@ import (
 func init() {}
 func main() {}
 
-//export iresImagePath
-func iresImagePath(URI *C.char, width, height, rType, mode int, Dir, Expire *C.char) *C.char {
-	uri := C.GoString(URI)
-	dir := C.GoString(Dir)
-	expire := C.GoString(Expire)
+//export resizeImagePath
+func resizeImagePath(URI *C.char, width, height, rType int, Dir, Expire *C.char) *C.char {
+	uri, dir, expire := cToString(URI, Dir, Expire)
+	r := ires.Init(ires.Size{ Width: width, Height: height }, rType, uri, dir, expire)
 
-	r := &ires.Ires{
-		Size: ires.Size{
-			Width:  width,
-			Height: height,
-		},
-		ResizeType: ires.ResizeType(rType),
-		URI:        uri,
-		Dir:        dir,
-		Expire:     expire,
-	}
-
-	// If local image, True
-	r.CheckLocal()
-	// Delete the expiration date image
-	r.DeleteExpireImage()
-
-	var distURI string
-	var err error
-	switch ires.Mode(mode) {
-	case ires.Resize:
-		distURI, err = r.Resize()
-	case ires.Crop:
-		distURI, err = r.Crop()
-	case ires.ResizeToCrop:
-		distURI, err = r.ResizeToCrop()
-	}
-
+	distURI, err := r.Resize()
 	if err != nil {
 		log.Print(err)
 		return C.CString(r.URI)
 	}
 	return C.CString(distURI)
+}
+
+//export cropImagePath
+func cropImagePath(URI *C.char, width, height, rType int, Dir, Expire *C.char) *C.char {
+	uri, dir, expire := cToString(URI, Dir, Expire)
+	r := ires.Init(ires.Size{ Width: width, Height: height }, rType, uri, dir, expire)
+
+	distURI, err := r.Crop()
+	if err != nil {
+		log.Print(err)
+		return C.CString(r.URI)
+	}
+	return C.CString(distURI)
+}
+
+//export resizeToCropImagePath
+func resizeToCropImagePath(URI *C.char, width, height, rType int, Dir, Expire *C.char) *C.char {
+	uri, dir, expire := cToString(URI, Dir, Expire)
+	r := ires.Init(ires.Size{ Width: width, Height: height }, rType, uri, dir, expire)
+
+	distURI, err := r.ResizeToCrop()
+	if err != nil {
+		log.Print(err)
+		return C.CString(r.URI)
+	}
+	return C.CString(distURI)
+}
+
+// Convert *C.char to String
+func cToString(uri, dir, expire *C.char) (u, d, e string){
+	u = C.GoString(uri)
+	d = C.GoString(dir)
+	e = C.GoString(expire)
+	return
 }

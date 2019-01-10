@@ -11,16 +11,16 @@
 
 ```erb
 <!-- Usually -->
-<%= ires_tag(path: "image_01.jpg", width: 90, height: 120) %>
+<%= ires_tag("image_01.jpg", width: 90, height: 120) %>
 
 <!-- Using image_tag options -->
-<%= ires_tag(path: "http://example.com/image_02.jpg", width: 200, height: 200, Ires::Mode::CROP, alt: "example image") %>
+<%= ires_tag("http://example.com/image_02.jpg", width: 200, height: 200, Ires::Mode::CROP, alt: "example image") %>
 ```
 
 ### Get resize path
 
 ```ruby
-Ires::Service.path(path: '<FULL IMAGE PATH>', width: 400, height: 300)
+Ires::Service.path('<FULL IMAGE PATH>', width: 400, height: 300)
 => /ires/<resize image path>
 ```
 
@@ -47,7 +47,7 @@ Filter of resize image.
 Default: **30days**
 
 ```erb
-<%= ires_tag(path: '/image.jpg', width: 400, height: 300, expire: 7.days) %>
+<%= ires_tag('/image.jpg', width: 400, height: 300, expire: 7.days) %>
 ```
 
 ### Saved directory
@@ -126,7 +126,7 @@ $ dep ensure
 # Output to a shared object.
 $ CGO_ENABLED=1 GOOS=linux go build -v -buildmode=c-shared -o shared/linux/ires.so ext/main.go
 ```
-※ In the current Docker, you can build only linux environment.
+※ In the current Docker, you can build only linux environment.  
 ※ If you want to build in other environments, add GCC or install Go on the host side.🙇
 
 ### 2. Start rails server
